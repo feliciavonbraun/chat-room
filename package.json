@@ -1,5 +1,5 @@
 {
-  "name": "chattRoom",
+  "name": "chat-room",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,13 +10,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/feliciavonbraun/chattRoom.git"
+    "url": "git+https://github.com/feliciavonbraun/chat-room.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/feliciavonbraun/chattRoom/issues"
+    "url": "https://github.com/feliciavonbraun/chat-room/issues"
   },
-  "homepage": "https://github.com/feliciavonbraun/chattRoom#readme"
+  "homepage": "https://github.com/feliciavonbraun/chat-room#readme"
 }
