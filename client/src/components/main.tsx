@@ -1,11 +1,11 @@
-import Message from "./message";
-import SignIn from "./signIn";
+// import Message from "./message";
+// import SignIn from "./signIn";
 
 function Main() {
     return(
         <div>
-           <SignIn />
-           <Message />
+           {/* <SignIn /> */}
+           {/* <Message /> */}
         </div>
     )
 };
