@@ -1,0 +1,22 @@
+{
+  "name": "chattRoom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm-run-all --parallel server client",
+    "server": "cd server && npm start",
+    "client": "cd client && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feliciavonbraun/chattRoom.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/feliciavonbraun/chattRoom/issues"
+  },
+  "homepage": "https://github.com/feliciavonbraun/chattRoom#readme"
+}
