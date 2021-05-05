@@ -1,11 +1,11 @@
-// import Message from "./message";
+import Message from "./message";
 // import SignIn from "./signIn";
 
 function Main() {
     return(
         <div>
            {/* <SignIn /> */}
-           {/* <Message /> */}
+           <Message />
         </div>
     )
 };
