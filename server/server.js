@@ -22,9 +22,9 @@ io.on('connection', (socket) => {
 
     socket.emit('welcome-message', 'HALLOJ bruh');
 
-    socket.on('message', (message) => {
+    socket.on('send-message', (message) => {
         console.log('Client sent the following message: ', message)
-        io.emit('message', message)
+        
     })
 });
 // ------------
