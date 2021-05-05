@@ -1,5 +1,5 @@
-import Layout from "./components/layout";
-import SocketProvider from "./contexts/socketProvider";
+import Layout from "./layout";
+import SocketProvider from "../contexts/socketProvider";
 
 
 function App() {
