@@ -13,6 +13,8 @@ function SignIn(props: Props) {
         props.logIn(username)
     }
 
+    console.log(window.innerWidth)
+
     return (
         <main style={rootStyle}>
             <div style={signInContainer}>
@@ -47,7 +49,7 @@ const signInContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '50%', // Behöver bli 90% för mobil
+    width: '90%',
     maxWidth: '25rem',
     height: '15rem',
     backgroundColor: 'white',
