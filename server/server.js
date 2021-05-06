@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io')
+const { Server } = require('socket.io');
 
 const PORT = 4000;
 
@@ -16,16 +16,19 @@ const io = new Server(server, {
 
 // ------------
 io.on('connection', (socket) => {
-    console.log('user connected', socket.id);
+    socket.emit('user-connected', socket.id);
 
-    socket.broadcast.emit('user-connected', socket.id);
 
-    socket.emit('welcome-message', 'HALLOJ bruh');
 
-    socket.on('send-message', (message) => {
-        console.log('Client sent the following message: ', message)
-        
-    })
+    // 'createRoom'
+    // 'joinRoom'
+    // socket.emit('send-message', )
+    // 'leaveRoom'
+
+    /* DISCONNECT */
+    socket.on('disconnect', () => {
+        console.log('User disconnected')
+    });
 });
 // ------------
 

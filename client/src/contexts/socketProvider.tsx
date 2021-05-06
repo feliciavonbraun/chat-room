@@ -3,30 +3,34 @@ import { createContext, FunctionComponent, useState } from "react";
 
 // Interface
 interface SocketValue {
-    connect: () => void;
+    username: string,
+    connect: (username: string ) => void;
     createRoom: () => void;
     joinRoom: () => void;
     sendMessage: () => void;
     leaveRoom: () => void;
     disconnect: () => void
-}
+};
 
-// Create context
-export const SocketContext = createContext<SocketValue>({} as SocketValue)
+/* Create context */
+export const SocketContext = createContext<SocketValue>({} as SocketValue);
 
-// Context provider
+/* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
-    const [socket] = useState(io("ws://localhost:4000", { transports: ["websocket"] }))
-    
+    const [socket] = useState(io("ws://localhost:4000", { transports: ["websocket"] }));
+    const [username, setUsername] = useState('');
+
     // Spara alla meddelanden? 
     // const [messages, setMessages] = useState<string[]>([])
+    console.log(username);
 
 
-    function connect(){
-        socket.on('connect', () => {
-            console.log('anslutning lyckad ')
-        })
-    }
+     function connect(username: string){
+        setUsername(username);
+        socket.on('user-connected', () => {
+            console.log('anslutning lyckad ');
+        });
+    };
 
     function createRoom(){
         console.log('createRoom')
@@ -46,13 +50,14 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     }
 
     function disconnect(){
-        socket.on('disconnected', () => {
+        socket.on('disconnect', () => {
             console.log('anslutning upphörde ')
         })
     }
 
     return (
         <SocketContext.Provider value={{
+            username, 
             connect,
             createRoom,
             joinRoom,
@@ -63,6 +68,5 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         { children }
         </SocketContext.Provider>
     )
-}
-
-export default SocketProvider
+};
+export default SocketProvider;
