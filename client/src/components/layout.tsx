@@ -1,19 +1,23 @@
-import { useContext } from "react";
-import { SocketContext } from "../contexts/socketProvider";
+import { useState } from "react";
+import SignIn from "./SignIn";
 import Main from "./main";
 
 function Layout() {
-    const { sendMessage } = useContext(SocketContext)
+    const [fakeInlog, setFakeInlog] = useState(false);
     
-    function emitAnEventToServer() {
-        sendMessage()  
-    }
+    function handleSignIn(username: string) {
+        setFakeInlog(true);
+        console.log(username)
+    };
 
-    return(
-        <div>
-            <Main />
-            <button onClick={emitAnEventToServer}>KNAPP</button>
-        </div>
+    return (
+        <>
+            {fakeInlog 
+            ?<Main />
+            :<SignIn logIn = {handleSignIn}/>
+            } 
+        </>
     )
 };
+
 export default Layout;

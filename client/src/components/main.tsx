@@ -1,10 +1,11 @@
 import Message from "./message";
-// import SignIn from "./signIn";
+
+// Antar att denna kommer att bestå av: Sidebar och chatt. Inte Message.
 
 function Main() {
     return(
         <div>
-           {/* <SignIn /> */}
+           <p>Hej</p>
            <Message />
         </div>
     )
