@@ -25,7 +25,13 @@ function SignIn(props: Props) {
                         maxLength={15}
                         style={inputStyle}
                     />
-                    <button type='submit' style={username.length < 3 ? {...buttonStyle, ...disabled} : {...buttonStyle, ...active}} disabled={username.length < 3}>
+                    <button 
+                        type='submit' 
+                        style={username.length < 3 
+                                ? {...buttonStyle, ...disabled} 
+                                : {...buttonStyle, ...active}} 
+                        disabled={username.length < 3}
+                        >
                         Let's Go
                     </button>
                 </form>
