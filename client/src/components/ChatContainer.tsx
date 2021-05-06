@@ -1,14 +1,15 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties,  useState } from "react";
+
 
 function ChatContainer() {
-    const [message, setMessage] = useState('')
+    const [message, setMessage] = useState('');
+    const [ room ] = useState('Living room');
 
     // TODO: Spara meddelanden och mappa ut i 'messageContainer'
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
         console.log(`send: ${message}`);
-        
         // Avsluta funktion med:
         setMessage('');
     }
@@ -16,11 +17,9 @@ function ChatContainer() {
     return (
         <div style={rootStyle}>
             <div style={titleContainer}>
-                <h3>RoomName</h3>
+                {room}
             </div>
             <div style={messageContainer}>
-
-
             </div>
             <form 
                 onSubmit={(e) => handleMessage(e)} 

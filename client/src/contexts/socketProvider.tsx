@@ -2,8 +2,12 @@ import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useState } from "react";
 
 // Interface
+interface Room {
+    titel: string,
+    password?: string
+}
 interface SocketValue {
-    username: string,
+    room: Room[],
     connect: (username: string ) => void;
     createRoom: () => void;
     joinRoom: () => void;
@@ -18,46 +22,41 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [socket] = useState(io("ws://localhost:4000", { transports: ["websocket"] }));
-    const [username, setUsername] = useState('');
-
     // Spara alla meddelanden? 
-    // const [messages, setMessages] = useState<string[]>([])
-    console.log(username);
-
-
-     function connect(username: string){
-        setUsername(username);
+    
+    connect();
+     function connect(){
         socket.on('user-connected', () => {
             console.log('anslutning lyckad ');
         });
     };
 
-    function createRoom(){
-        console.log('createRoom')
+    function createRoom() {
+        console.log('createRoom');
+    }
+    
+    function joinRoom() {
+        socket.emit('join_room');
     }
 
-    function joinRoom(){
-        console.log('joinRoom')
-    }
-
-    function sendMessage(){
+    function sendMessage() {
         socket.emit('send-message', "David says hi!");
-        console.log('sendMessage')
+        console.log('sendMessage');
     }
 
-    function leaveRoom(){
-        console.log('leaveRoom')
+    function leaveRoom() {
+        console.log('leaveRoom');
     }
 
-    function disconnect(){
+    function disconnect() {
         socket.on('disconnect', () => {
-            console.log('anslutning upphörde ')
-        })
+            console.log('anslutning upphörde ');
+        });
     }
 
     return (
         <SocketContext.Provider value={{
-            username, 
+            room: [],
             connect,
             createRoom,
             joinRoom,
