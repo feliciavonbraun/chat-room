@@ -17,11 +17,13 @@ const io = new Server(server, {
 // ------------
 io.on('connection', (socket) => {
     socket.emit('user-connected', socket.id);
+    console.log('hej', socket.id)
 
+     // 'createRoom'
 
-
-    // 'createRoom'
-    // 'joinRoom'
+    socket.on('join_room', () => {
+        console.log('user has joined room');
+    });
     // socket.emit('send-message', )
     // 'leaveRoom'
 

@@ -1,4 +1,5 @@
-import { CSSProperties, useState } from "react"
+import { CSSProperties, useContext, useState } from "react"
+import { SocketContext } from "../contexts/socketProvider"
 
 interface Props {
     logIn: (username: string) => void
@@ -7,10 +8,15 @@ interface Props {
 
 function SignIn(props: Props) {
     const [username, setUsername] = useState('')
+    const { joinRoom } = useContext(SocketContext);
 
     function handleUsername(e:React.FormEvent) {
         e.preventDefault()
         props.logIn(username)
+    }
+
+    function goToDefault() {
+        joinRoom();
     }
 
     return (
@@ -31,6 +37,7 @@ function SignIn(props: Props) {
                                 ? {...buttonStyle, ...disabled} 
                                 : {...buttonStyle, ...active}} 
                         disabled={username.length < 3}
+                        onClick={goToDefault}
                         >
                         Let's Go
                     </button>
