@@ -53,7 +53,7 @@ const titleContainer: CSSProperties = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '10%',
-}
+};
 
 const messageContainer: CSSProperties = {
     height: '75%',
