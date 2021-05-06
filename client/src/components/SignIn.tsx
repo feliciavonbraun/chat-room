@@ -13,8 +13,6 @@ function SignIn(props: Props) {
         props.logIn(username)
     }
 
-    console.log(window.innerWidth)
-
     return (
         <main style={rootStyle}>
             <div style={signInContainer}>
