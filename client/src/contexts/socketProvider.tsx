@@ -8,12 +8,14 @@ interface Room {
 }
 interface SocketValue {
     room: Room[],
-    connect: (username: string ) => void;
+    username: string,
+    connect: () => void;
     createRoom: () => void;
     joinRoom: () => void;
     sendMessage: () => void;
     leaveRoom: () => void;
-    disconnect: () => void
+    disconnect: () => void;
+    getUsername: (username: string) => void
 };
 
 /* Create context */
@@ -22,6 +24,10 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [socket] = useState(io("ws://localhost:4000", { transports: ["websocket"] }));
+    const [username, setUsername] = useState('')
+    // Username ska skickas till socket i backend. 
+    console.log(username)
+    
     // Spara alla meddelanden? 
     
     connect();
@@ -30,6 +36,10 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             console.log('anslutning lyckad ');
         });
     };
+
+    function getUsername(username: string) {
+        setUsername(username);
+    }
 
     function createRoom() {
         console.log('createRoom');
@@ -57,12 +67,14 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     return (
         <SocketContext.Provider value={{
             room: [],
+            username,
             connect,
             createRoom,
             joinRoom,
             sendMessage,
             leaveRoom,
-            disconnect
+            disconnect,
+            getUsername,
         }}>
         { children }
         </SocketContext.Provider>
