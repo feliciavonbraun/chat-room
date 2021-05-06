@@ -1,13 +1,18 @@
-import Message from "./message";
-
-// Antar att denna kommer att bestå av: Sidebar och chatt. Inte Message.
+import { CSSProperties } from "react";
+import ChatContainer from "./ChatContainer";
+import Sidebar from "./Sidebar";
 
 function Main() {
     return(
-        <div>
-           <p>Hej</p>
-           <Message />
-        </div>
+        <main style={rootStyle}>
+           <Sidebar />
+           <ChatContainer />
+        </main>
     )
 };
+
+const rootStyle: CSSProperties = {
+    display: 'flex',
+}
+
 export default Main;
