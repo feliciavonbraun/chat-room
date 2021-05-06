@@ -1,9 +1,10 @@
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 
 function Sidebar() {
+    const [ room ] = useState('Living room');
     const { username } = useContext(SocketContext);
 
     function handleRoomClick(e: React.MouseEvent) {
@@ -20,11 +21,12 @@ function Sidebar() {
             <button style={newChatButton}>New Chat</button>
             <div style={roomsContainer}>
                 <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
+                <button style={roomButton}>{room}</button>
                 <button onClick={(e) => handleRoomClick(e)} style={{...roomButton, ...activeRoomButton}}>TestRoom1</button>
                 <button style={roomButton}>TestRoom2</button>
             </div>
         </aside>
-    )
+    );
 }
 
 const rootStyle: CSSProperties = {
