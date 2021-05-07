@@ -20,6 +20,11 @@ io.on('connection', (socket) => {
 
      // 'createRoom'
 
+    // SEND MESSAGE
+    socket.emit('chat-message', (message) => {
+        console.log('message:' + message)
+    }); 
+  
      /* JOIN ROOM */
     socket.on('join_room', (data) => {
         socket.join(data);

@@ -2,17 +2,19 @@ import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useState } from "react";
 
 // Interface
+
 interface Room {
     titel: string,
     password?: string
 }
+
 interface SocketValue {
     room: Room[],
     username: string,
     connect: () => void,
     createRoom: () => void;
     joinRoom: () => void;
-    sendMessage: () => void;
+    sendMessage: ( newMessage: string ) => void;
     leaveRoom: () => void;
     disconnect: () => void;
     getUsername: (username: string) => void
@@ -24,13 +26,19 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
-    const [username, setUsername] = useState('')
+    const [username, setUsername] = useState('');
+    const [allMessages, setAllMessages] = useState<any[]>([]);
     const room = 'Living room'
-    // Username ska skickas till socket i backend. 
-    // Spara alla meddelanden? 
+
+    console.log(username);
 
 
-
+    function connect(username: string){
+        setUsername(username);
+        socket.on('user-connected', () => {
+            console.log('anslutning lyckad ');
+        });
+    };
 
     connect();
     function connect(){
@@ -51,10 +59,18 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.emit('join_room', room);
     }
 
-    function sendMessage() {
-        socket.emit('send-message', "David says hi!");
-        console.log('sendMessage');
-    }
+    function sendMessage(newMessage: string) {
+        socket.on('chat-message', () => {
+            setAllMessages([...allMessages, newMessage])
+            console.log([...allMessages, newMessage])
+        });
+        console.log('contexten nådd')
+    };
+    //function sendMessage() {
+    //    socket.emit('send-message', "David says hi!");
+    //    console.log('sendMessage');
+    //}
+
 
     function leaveRoom() {
         socket.emit('leave_room')
