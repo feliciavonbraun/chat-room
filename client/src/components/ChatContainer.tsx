@@ -25,22 +25,20 @@ function ChatContainer() {
         console.log(`newMessage: ${newMessage}`);
     };
 
-
     return (
         <div style={rootStyle}>
             <div style={titleContainer}>
                 {room}
             </div>
             <button 
-            style={buttonStyle}
-            onClick={() => leaveRoom()}
+                style={buttonStyle}
+                onClick={() => leaveRoom()}
             >
                 Leave room
             </button>
             <div style={messageContainer}>
                 <p> säger: {sendMessage}</p>
                 <p>Här ska alla meddelande in</p>
-
             </div>
             <form
                 onSubmit={(e) => handleMessage(e)}

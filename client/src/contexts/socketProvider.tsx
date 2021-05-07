@@ -1,8 +1,7 @@
 import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useState } from "react";
 
-// Interface
-
+// 
 interface Room {
     titel: string,
     password?: string
@@ -16,7 +15,7 @@ interface SocketValue {
     joinRoom: () => void;
     sendMessage: ( newMessage: string ) => void;
     leaveRoom: () => void;
-    disconnect: () => void;
+    leaveChat: () => void;
     getUsername: (username: string) => void
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] }); 
@@ -28,7 +27,8 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<any[]>([]);
-    const room = 'Living room'
+    const room = 'Living room';
+ 
 
     connect();
     function connect(){
@@ -63,13 +63,13 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
 
     function leaveRoom() {
-        socket.emit('leave_room')
+        socket.emit('leave_room', room)
     }
 
-    function disconnect() {
+    function leaveChat() {
         socket.on('disconnect', () => {
-            console.log('anslutning upphörde ');
         });
+        socket.disconnect();
     }
 
     return (
@@ -81,7 +81,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             joinRoom,
             sendMessage,
             leaveRoom,
-            disconnect,
+            leaveChat,
             getUsername,
         }}>
         { children }

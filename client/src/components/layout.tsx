@@ -3,17 +3,17 @@ import SignIn from "./SignIn";
 import Main from "./main";
 
 function Layout() {
-    const [fakeInlog, setFakeInlog] = useState(false);
+    const [signedIn, setSignedIn] = useState(false);
     
-    function handleSignIn() {
-        setFakeInlog(true);
+    function toggleSignIn() {
+        setSignedIn(!signedIn);
     };
 
     return (
         <>
-            {fakeInlog 
-            ?<Main />
-            :<SignIn logIn = {handleSignIn}/>
+            {signedIn 
+            ?<Main signOut = {toggleSignIn} />
+            :<SignIn signIn = {toggleSignIn}/>
             } 
         </>
     );
