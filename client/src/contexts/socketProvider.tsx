@@ -9,7 +9,7 @@ interface Room {
 interface SocketValue {
     room: Room[],
     username: string,
-    connect: () => void;
+    connect: () => void,
     createRoom: () => void;
     joinRoom: () => void;
     sendMessage: () => void;
@@ -17,26 +17,27 @@ interface SocketValue {
     disconnect: () => void;
     getUsername: (username: string) => void
 };
+const socket = io('http://localhost:4000', { transports: ["websocket"] }); 
 
 /* Create context */
 export const SocketContext = createContext<SocketValue>({} as SocketValue);
 
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
-    const [socket] = useState(io("ws://localhost:4000", { transports: ["websocket"] }));
     const [username, setUsername] = useState('')
     // Username ska skickas till socket i backend. 
-    console.log(username)
-    
     // Spara alla meddelanden? 
-    
-    connect();
-     function connect(){
-        socket.on('user-connected', () => {
-            console.log('anslutning lyckad ');
-        });
-    };
 
+
+
+
+    connect();
+    function connect(){
+       socket.on('user-connected', () => {
+           console.log('anslutning lyckad ');
+       });
+   };
+    
     function getUsername(username: string) {
         setUsername(username);
     }
