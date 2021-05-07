@@ -2,21 +2,30 @@ import { CSSProperties, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
+interface Props {
+    signOut:() => void;
+}
 
-function Sidebar() {
+function Sidebar(props: Props) {
     const [ room ] = useState('Living room');
-    const { username } = useContext(SocketContext);
+    const { username, leaveChat } = useContext(SocketContext);
 
     function handleRoomClick(e: React.MouseEvent) {
-        console.log(e.target)
-        
+        console.log(e.target)  
     }
 
+    
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
                 <h2>ChatALot</h2>
                 <h3 style={usernameStyle}>{username}</h3>
+                <button 
+                    style={newChatButton}
+                    onClick={() => {leaveChat(); props.signOut()}}
+                >
+                    Log out
+                </button>
             </div>
             <button style={newChatButton}>New Chat</button>
             <div style={roomsContainer}>

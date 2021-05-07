@@ -2,10 +2,15 @@ import { CSSProperties } from "react";
 import ChatContainer from "./ChatContainer";
 import Sidebar from "./Sidebar";
 
-function Main() {
+interface Props {
+    signOut: () => void;
+}
+
+
+function Main(props: Props) {
     return(
         <main style={rootStyle}>
-           <Sidebar />
+           <Sidebar signOut={props.signOut} />
            <ChatContainer />
         </main>
     );

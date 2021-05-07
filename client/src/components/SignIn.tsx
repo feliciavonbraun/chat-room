@@ -2,7 +2,7 @@ import { CSSProperties, useContext, useState } from "react"
 import { SocketContext } from "../contexts/socketProvider"
 
 interface Props {
-    logIn: () => void
+    signIn: () => void
 };
 // Fråga: Ska vi ha en gräns på att användarnamnet måste vara mer än ex. 3 bokstäver? 
 
@@ -14,7 +14,7 @@ function SignIn(props: Props) {
         e.preventDefault()
         getUsername(username)
         joinRoom();
-        props.logIn()
+        props.signIn()
     }
 
     return (
