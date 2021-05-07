@@ -10,10 +10,6 @@ interface Props {
 function Sidebar(props: Props) {
     const [ room ] = useState('Living room');
     const { username, leaveChat } = useContext(SocketContext);
-
-    function handleRoomClick(e: React.MouseEvent) {
-        console.log(e.target)  
-    }
     
     return (
         <aside style={rootStyle}>
