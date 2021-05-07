@@ -25,6 +25,7 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('')
+    const room = 'Living room'
     // Username ska skickas till socket i backend. 
     // Spara alla meddelanden? 
 
@@ -47,7 +48,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     }
     
     function joinRoom() {
-        socket.emit('join_room');
+        socket.emit('join_room', room);
     }
 
     function sendMessage() {
@@ -56,7 +57,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     }
 
     function leaveRoom() {
-        console.log('leaveRoom');
+        socket.emit('leave_room')
     }
 
     function disconnect() {

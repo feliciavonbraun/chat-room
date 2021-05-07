@@ -13,7 +13,6 @@ const io = new Server(server, {
     }
 });
 
-
 // ------------
 io.on('connection', (socket) => {
     socket.emit('user-connected', socket.id);
@@ -21,11 +20,16 @@ io.on('connection', (socket) => {
 
      // 'createRoom'
 
-    socket.on('join_room', () => {
-        console.log('user has joined room');
+     /* JOIN ROOM */
+    socket.on('join_room', (data) => {
+        socket.join(data);
+        console.log('user has joined room ' + data);
     });
-    // socket.emit('send-message', )
-    // 'leaveRoom'
+
+    /* LEAVE ROOM */
+    socket.on('leave_room', () => {
+        console.log('user has left room')
+    })
 
     /* DISCONNECT */
     socket.on('disconnect', () => {
