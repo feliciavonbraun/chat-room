@@ -1,23 +1,27 @@
-import { CSSProperties, useState } from "react"
+import { CSSProperties, useContext, useState } from "react"
+import { SocketContext } from "../contexts/socketProvider"
 
 interface Props {
-    logIn: (username: string) => void
+    logIn: () => void
 };
 // Fråga: Ska vi ha en gräns på att användarnamnet måste vara mer än ex. 3 bokstäver? 
 
 function SignIn(props: Props) {
     const [username, setUsername] = useState('')
+    const { joinRoom, getUsername } = useContext(SocketContext);
 
-    function handleUsername(e:React.FormEvent) {
+    function handleSignIn(e:React.FormEvent) {
         e.preventDefault()
-        props.logIn(username)
+        getUsername(username)
+        joinRoom();
+        props.logIn()
     }
 
     return (
         <main style={rootStyle}>
             <div style={signInContainer}>
                 <h1>ChatALot</h1>
-                <form onSubmit={(e) => handleUsername(e)} style={formStyle}>
+                <form onSubmit={(e) => handleSignIn(e)} style={formStyle}>
                     <input 
                         type='text' 
                         onChange={(e) => setUsername(e.target.value)}

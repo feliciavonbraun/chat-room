@@ -13,23 +13,28 @@ const io = new Server(server, {
     }
 });
 
-
 // ------------
 io.on('connection', (socket) => {
     socket.emit('user-connected', socket.id);
+    console.log('hej', socket.id)
 
-
-    // 'createRoom'
-    // 'joinRoom'
-
+     // 'createRoom'
 
     // SEND MESSAGE
     socket.emit('chat-message', (message) => {
         console.log('message:' + message)
     }); 
+  
+     /* JOIN ROOM */
+    socket.on('join_room', (data) => {
+        socket.join(data);
+        console.log('user has joined room ' + data);
+    });
 
-
-    // 'leaveRoom'
+    /* LEAVE ROOM */
+    socket.on('leave_room', () => {
+        console.log('user has left room')
+    })
 
     /* DISCONNECT */
     socket.on('disconnect', () => {

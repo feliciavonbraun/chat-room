@@ -2,10 +2,10 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, username } = useContext(SocketContext);
+    const { sendMessage, leaveRoom } = useContext(SocketContext);
     const [newMessage, setNewMessage] = useState('');
-
-
+    const [ room ] = useState('Living room');
+  
     // TODO: Spara meddelanden och mappa ut i 'messageContainer'
 
     function handleMessage(e: React.FormEvent) {
@@ -25,14 +25,22 @@ function ChatContainer() {
         console.log(`newMessage: ${newMessage}`);
     };
 
+
     return (
         <div style={rootStyle}>
             <div style={titleContainer}>
-                <h3>RoomName</h3>
+                {room}
             </div>
+            <button 
+            style={buttonStyle}
+            onClick={() => leaveRoom()}
+            >
+                Leave room
+            </button>
             <div style={messageContainer}>
-                <p>{username} säger: {sendMessage}</p>
+                <p> säger: {sendMessage}</p>
                 <p>Här ska alla meddelande in</p>
+
             </div>
             <form
                 onSubmit={(e) => handleMessage(e)}
