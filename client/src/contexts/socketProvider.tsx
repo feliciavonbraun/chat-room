@@ -30,16 +30,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [allMessages, setAllMessages] = useState<any[]>([]);
     const room = 'Living room'
 
-    console.log(username);
-
-
-    function connect(username: string){
-        setUsername(username);
-        socket.on('user-connected', () => {
-            console.log('anslutning lyckad ');
-        });
-    };
-
     connect();
     function connect(){
        socket.on('user-connected', () => {
