@@ -36,14 +36,16 @@ io.on('connection', (socket) => {
     });
 
     /* LEAVE ROOM */
-    socket.on('leave_room', () => {
-        console.log('user has left room')
-    })
+    socket.on('leave_room', (data) => {
+        socket.leave(data)
+        console.log('user has left room' + data)
+    });
 
     /* DISCONNECT */
-    socket.on('disconnect', () => {
-        console.log('User disconnected')
+    socket.on('disconnect', (data) => {
+        console.log(data)
     });
+
 });
 // ------------
 

@@ -23,7 +23,7 @@ interface SocketValue {
     joinRoom: () => void;
     sendMessage: (newMessage: string) => void;
     leaveRoom: () => void;
-    disconnect: () => void;
+    leaveChat: () => void;
     getUsername: (username: string) => void
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
@@ -36,6 +36,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<any>([] as WholeMessage[]);
     const room = 'Living room'
+
 
     connect();
     function connect() {
@@ -83,13 +84,13 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
 
     function leaveRoom() {
-        socket.emit('leave_room')
+        socket.emit('leave_room', room)
     }
 
-    function disconnect() {
+    function leaveChat() {
         socket.on('disconnect', () => {
-            console.log('anslutning upphörde ');
         });
+        socket.disconnect();
     }
 
     return (
@@ -105,7 +106,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             allMessages,
 
             leaveRoom,
-            disconnect,
+            leaveChat,
             getUsername,
         }}>
             { children}
