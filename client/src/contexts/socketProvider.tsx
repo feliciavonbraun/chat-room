@@ -3,10 +3,10 @@ import { createContext, FunctionComponent, useEffect, useState } from "react";
 
 // Interface
 
-// export interface WholeMessage {
-//     username?: string,
-//     text: string,
-// }
+export interface WholeMessage {
+    username?: string,
+    text: string,
+}
 
 interface Room {
     titel: string,
@@ -15,10 +15,9 @@ interface Room {
 
 interface SocketValue {
     room: Room[],
+    wholeMessage: WholeMessage[],
     username: string,
-
-    allMessages: any,
-
+    allMessages: [],
     connect: () => void,
     createRoom: () => void;
     joinRoom: () => void;
@@ -35,7 +34,7 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
-    const [allMessages, setAllMessages] = useState<any[]>([]);
+    const [allMessages, setAllMessages] = useState<any>([] as WholeMessage[]);
     const room = 'Living room'
 
     connect();
@@ -60,12 +59,12 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     function sendMessage(newMessage: string) {
 
         // const content = {
-        //     author: username,
+        //     // author: username,
         //     message: newMessage
         // }
 
-        socket.emit('send-message', newMessage);
-        // setAllMessages([...allMessages, newMessage])
+        socket.emit('send-message', newMessage); // newmessage får man ut meddelandet. content får man ut object object. 
+        setAllMessages([...allMessages, newMessage]) // denna gör ingeting??
         // setNewMessage('');
         console.log('sendMessage nådd')
     };
@@ -75,7 +74,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             setAllMessages([...allMessages, data])
             console.log([...allMessages, data])
         });
-    });
+    }, [allMessages]);
 
     // function sendMessage() {
     //    socket.emit('send-message', "David says hi!");
@@ -96,6 +95,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     return (
         <SocketContext.Provider value={{
             room: [],
+            wholeMessage: [],
             username,
             connect,
             createRoom,
