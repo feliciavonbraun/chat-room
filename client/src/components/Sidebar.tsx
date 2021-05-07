@@ -2,27 +2,27 @@ import { CSSProperties, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
+interface Props {
+    openForm: () => void
+};
 
-function Sidebar() {
+function Sidebar(props: Props) {
     const [ room ] = useState('Living room');
     const { username } = useContext(SocketContext);
-
-    function handleRoomClick(e: React.MouseEvent) {
-        console.log(e.target)
-        
-    }
-
+    
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
                 <h2>ChatALot</h2>
                 <h3 style={usernameStyle}>{username}</h3>
             </div>
-            <button style={newChatButton}>New Chat</button>
+            <button onClick={props.openForm} style={newChatButton}>
+                New Chat
+            </button>
             <div style={roomsContainer}>
                 <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
                 <button style={roomButton}>{room}</button>
-                <button onClick={(e) => handleRoomClick(e)} style={{...roomButton, ...activeRoomButton}}>TestRoom1</button>
+                <button style={{...roomButton, ...activeRoomButton}}>TestRoom1</button>
                 <button style={roomButton}>TestRoom2</button>
             </div>
         </aside>
