@@ -16,16 +16,20 @@ const io = new Server(server, {
 // ------------
 io.on('connection', (socket) => {
     socket.emit('user-connected', socket.id);
-    console.log('hej', socket.id)
+    console.log('Ditt id:', socket.id)
 
     // 'createRoom'
 
-    // SEND MESSAGE
-    socket.emit('chat-message', (message) => {
-        console.log('message:' + message)
+    // MESSAGE
+    socket.on('send-message', (data) => {
+        console.log('consolelog servern:' + data)
     }); 
+
+    socket.on('receive-message', (data) => {
+        console.log('hela arrayen: ' + data )
+    });
   
-     /* JOIN ROOM */
+    /* JOIN ROOM */
     socket.on('join_room', (data) => {
         socket.join(data);
         console.log('user has joined room ' + data);
