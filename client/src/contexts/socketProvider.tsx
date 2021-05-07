@@ -2,12 +2,19 @@ import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useState } from "react";
 
 // Interface
+
+// console.log(newMessage)
+export interface Message {
+
+}
+
 interface SocketValue {
     username: string,
+    // allMessages: any,
     connect: (username: string ) => void;
     createRoom: () => void;
     joinRoom: () => void;
-    sendMessage: () => void;
+    sendMessage: ( newMessage: string ) => void;
     leaveRoom: () => void;
     disconnect: () => void
 };
@@ -19,13 +26,12 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [socket] = useState(io("ws://localhost:4000", { transports: ["websocket"] }));
     const [username, setUsername] = useState('');
+    const [allMessages, setAllMessages] = useState<any[]>([]);
 
-    // Spara alla meddelanden? 
-    // const [messages, setMessages] = useState<string[]>([])
     console.log(username);
 
 
-     function connect(username: string){
+    function connect(username: string){
         setUsername(username);
         socket.on('user-connected', () => {
             console.log('anslutning lyckad ');
@@ -40,10 +46,13 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         console.log('joinRoom')
     }
 
-    function sendMessage(){
-        socket.emit('send-message', "David says hi!");
-        console.log('sendMessage')
-    }
+    function sendMessage(newMessage: string) {
+        socket.on('chat-message', () => {
+            setAllMessages([...allMessages, newMessage])
+            console.log([...allMessages, newMessage])
+        });
+        console.log('contexten nådd')
+    };
 
     function leaveRoom(){
         console.log('leaveRoom')

@@ -1,17 +1,29 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useContext, useState } from "react";
+import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const [message, setMessage] = useState('')
+    const { sendMessage, username } = useContext(SocketContext);
+    const [newMessage, setNewMessage] = useState('');
+
 
     // TODO: Spara meddelanden och mappa ut i 'messageContainer'
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
-        console.log(`send: ${message}`);
-        
-        // Avsluta funktion med:
-        setMessage('');
-    }
+
+        sendMessage(newMessage)
+        setNewMessage('');
+
+        // let messageContent = {
+        //     // room: room,
+        //     content: {
+        //         author: username,
+        //         message: newMessage
+        //     }
+        // };
+
+        console.log(`newMessage: ${newMessage}`);
+    };
 
     return (
         <div style={rootStyle}>
@@ -19,29 +31,30 @@ function ChatContainer() {
                 <h3>RoomName</h3>
             </div>
             <div style={messageContainer}>
-
-
+                <p>{username} säger: {sendMessage}</p>
+                <p>Här ska alla meddelande in</p>
             </div>
-            <form 
-                onSubmit={(e) => handleMessage(e)} 
+            <form
+                onSubmit={(e) => handleMessage(e)}
                 style={formContainer}
             >
-                <input 
-                    placeholder='Message...' 
+                <input
+                    type='text'
+                    placeholder='Message...'
                     style={inputStyle}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)} 
+                    value={newMessage}
+                    onChange={(event) => setNewMessage(event.target.value)}
                 />
-                <button 
-                    type='submit' 
+                <button
+                    type='submit'
                     style={buttonStyle}
                 >
                     Send
                 </button>
             </form>
         </div>
-    )
-}
+    );
+};
 
 const rootStyle: CSSProperties = {
     width: '100%',
@@ -85,9 +98,5 @@ const buttonStyle: CSSProperties = {
     border: 'none',
     outline: 'none',
     boxShadow: '.1rem .1rem .3rem #00000020 inset',
-}
-
-
-
-
+};
 export default ChatContainer;

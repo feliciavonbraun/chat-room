@@ -19,10 +19,16 @@ io.on('connection', (socket) => {
     socket.emit('user-connected', socket.id);
 
 
-
     // 'createRoom'
     // 'joinRoom'
-    // socket.emit('send-message', )
+
+
+    // SEND MESSAGE
+    socket.emit('chat-message', (message) => {
+        console.log('message:' + message)
+    }); 
+
+
     // 'leaveRoom'
 
     /* DISCONNECT */
