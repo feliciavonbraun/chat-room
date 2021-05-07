@@ -4,22 +4,21 @@ import { createContext, FunctionComponent, useState } from "react";
 // Interface
 
 interface Room {
-    titel: string,
+    roomTitle: string,
     password?: string
-}
+};
 
 interface SocketValue {
-    room: Room[],
+    rooms: Room[],
     username: string,
-    connect: () => void,
-    createRoom: () => void;
+    saveUsername: (username: string) => void,
+    createRoom: (chatRoom: string, password?: string) => void;
     joinRoom: () => void;
-    sendMessage: ( newMessage: string ) => void;
+    sendMessage: (newMessage: string) => void;
     leaveRoom: () => void;
     disconnect: () => void;
-    getUsername: (username: string) => void
 };
-const socket = io('http://localhost:4000', { transports: ["websocket"] }); 
+const socket = io('http://localhost:4000', { transports: ["websocket"] });
 
 /* Create context */
 export const SocketContext = createContext<SocketValue>({} as SocketValue);
@@ -28,25 +27,27 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<any[]>([]);
-    const room = 'Living room'
-
-    connect();
-    function connect(){
-       socket.on('user-connected', () => {
-           console.log('anslutning lyckad ');
-       });
-   };
     
-    function getUsername(username: string) {
+    // Här ska alla skapta rum sparas. Däremot uppdateras inte denna när rum läggs till...
+    const rooms: Room[] = []
+    console.log('array', rooms)
+
+    function saveUsername(username: string) {
         setUsername(username);
-    }
+        socket.emit('user-connected', username);
+    };
 
-    function createRoom() {
-        console.log('createRoom');
-    }
-    
+    function createRoom(newRoomName: string, _password?: string) {
+        socket.emit('create-room', newRoomName, _password);
+        socket.on('create-room', (updatedChatRooms: []) => {
+            // Här läggs rummen till från server och sparas i const rooms som ligger ovanför.
+            updatedChatRooms.forEach(room => rooms.push(room));
+            console.log(rooms)
+        })
+    };
+
     function joinRoom() {
-        socket.emit('join_room', room);
+        socket.emit('join-room', 'katt');
     }
 
     function sendMessage(newMessage: string) {
@@ -63,7 +64,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
 
     function leaveRoom() {
-        socket.emit('leave_room')
+        socket.emit('leave-room')
     }
 
     function disconnect() {
@@ -74,17 +75,16 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     return (
         <SocketContext.Provider value={{
-            room: [],
+            rooms: [],
             username,
-            connect,
+            saveUsername,
             createRoom,
             joinRoom,
             sendMessage,
             leaveRoom,
             disconnect,
-            getUsername,
         }}>
-        { children }
+            { children}
         </SocketContext.Provider>
     )
 };

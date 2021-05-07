@@ -14,11 +14,30 @@ const io = new Server(server, {
 });
 
 // ------------
-io.on('connection', (socket) => {
-    socket.emit('user-connected', socket.id);
-    console.log('hej', socket.id)
+let signedInUsers = [];
 
-     // 'createRoom'
+const chatRooms = []
+
+io.on('connection', (socket) => {
+
+    socket.on('user-connected', username => {
+        user = socket.id
+        signedInUsers.push(user)
+        console.log(signedInUsers)
+        console.log('Signed in as: ', user)
+    }); 
+
+    // 'CREATE ROOM'
+    socket.on('create-room', (roomTitle, _password) => {
+        chatRooms.push({
+            roomTitle: roomTitle,
+            password: _password,
+        });
+
+        socket.emit('create-room', chatRooms);
+        console.log('skapat rum: ', roomTitle, _password);
+        console.log('Alla rum', chatRooms);
+    });
 
     // SEND MESSAGE
     socket.emit('chat-message', (message) => {
@@ -26,15 +45,18 @@ io.on('connection', (socket) => {
     }); 
   
      /* JOIN ROOM */
-    socket.on('join_room', (data) => {
+    socket.on('join-room', (data) => {
         socket.join(data);
         console.log('user has joined room ' + data);
     });
 
     /* LEAVE ROOM */
-    socket.on('leave_room', () => {
-        console.log('user has left room')
-    })
+    socket.on('leave-room', () => {
+        findUser = signedInUsers.find((user) => user = socket.id);
+        
+        console.log(findUser, 'has left room');
+        console.log(signedInUsers)
+    });
 
     /* DISCONNECT */
     socket.on('disconnect', () => {
