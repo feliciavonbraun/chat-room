@@ -4,6 +4,7 @@ import { SocketContext } from "../contexts/socketProvider";
 
 interface Props {
     signOut:() => void;
+    openForm: () => void
 }
 
 function Sidebar(props: Props) {
@@ -13,7 +14,6 @@ function Sidebar(props: Props) {
     function handleRoomClick(e: React.MouseEvent) {
         console.log(e.target)  
     }
-
     
     return (
         <aside style={rootStyle}>
@@ -27,11 +27,13 @@ function Sidebar(props: Props) {
                     Log out
                 </button>
             </div>
-            <button style={newChatButton}>New Chat</button>
+            <button onClick={props.openForm} style={newChatButton}>
+                New Chat
+            </button>
             <div style={roomsContainer}>
                 <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
                 <button style={roomButton}>{room}</button>
-                <button onClick={(e) => handleRoomClick(e)} style={{...roomButton, ...activeRoomButton}}>TestRoom1</button>
+                <button style={{...roomButton, ...activeRoomButton}}>TestRoom1</button>
                 <button style={roomButton}>TestRoom2</button>
             </div>
         </aside>

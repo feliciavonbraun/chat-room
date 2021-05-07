@@ -1,6 +1,8 @@
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 import ChatContainer from "./ChatContainer";
+import NewChatForm from "./NewChatForm";
 import Sidebar from "./Sidebar";
+
 
 interface Props {
     signOut: () => void;
@@ -8,10 +10,22 @@ interface Props {
 
 
 function Main(props: Props) {
+    const [showForm, setShowForm] = useState(false)
+
+    function toggleNewChatForm() {
+        setShowForm(!showForm);
+    };
+    
     return(
         <main style={rootStyle}>
-           <Sidebar signOut={props.signOut} />
-           <ChatContainer />
+           <Sidebar 
+                openForm={toggleNewChatForm} 
+                signOut={props.signOut}
+            />
+           {showForm 
+            ?   <NewChatForm closeForm={toggleNewChatForm}/>
+            :   <ChatContainer />
+           }
         </main>
     );
 };
