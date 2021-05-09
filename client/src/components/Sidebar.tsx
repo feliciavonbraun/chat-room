@@ -3,18 +3,28 @@ import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 interface Props {
+    signOut:() => void;
     openForm: () => void
-};
+}
 
 function Sidebar(props: Props) {
-    const { username, rooms } = useContext(SocketContext);
     // Rooms är tom, trots att de pushas in i kontexten 'createRoom'...
-    console.log(rooms)
+
+    const [ room ] = useState('Living room');
+    const { username, leaveChat, rooms } = useContext(SocketContext);
+    
+
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
                 <h2>ChatALot</h2>
                 <h3 style={usernameStyle}>{username}</h3>
+                <button 
+                    style={newChatButton}
+                    onClick={() => {leaveChat(); props.signOut()}}
+                >
+                    Log out
+                </button>
             </div>
             <button onClick={props.openForm} style={newChatButton}>
                 New Chat

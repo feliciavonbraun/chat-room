@@ -20,6 +20,7 @@ const chatRooms = []
 
 io.on('connection', (socket) => {
 
+
     socket.on('user-connected', username => {
         user = socket.id
         signedInUsers.push(user)
@@ -39,11 +40,17 @@ io.on('connection', (socket) => {
         console.log('Alla rum', chatRooms);
     });
 
-    // SEND MESSAGE
-    socket.emit('chat-message', (message) => {
-        console.log('message:' + message)
+
+    // MESSAGE
+    socket.on('send-message', (data) => {
+        console.log('consolelog servern:' + data)
     }); 
+
+    socket.on('receive-message', (data) => {
+        console.log('hela arrayen: ' + data )
+    });
   
+
      /* JOIN ROOM */
     socket.on('join-room', (data) => {
         socket.join(data);
@@ -51,6 +58,7 @@ io.on('connection', (socket) => {
     });
 
     /* LEAVE ROOM */
+
     socket.on('leave-room', () => {
         findUser = signedInUsers.find((user) => user = socket.id);
         
@@ -59,9 +67,10 @@ io.on('connection', (socket) => {
     });
 
     /* DISCONNECT */
-    socket.on('disconnect', () => {
-        console.log('User disconnected')
+    socket.on('disconnect', (data) => {
+        console.log(data)
     });
+
 });
 // ------------
 

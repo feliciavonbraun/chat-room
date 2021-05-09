@@ -1,7 +1,12 @@
 import { io } from 'socket.io-client';
-import { createContext, FunctionComponent, useState } from "react";
+import { createContext, FunctionComponent, useEffect, useState } from "react";
 
 // Interface
+
+export interface WholeMessage {
+    username?: string,
+    text: string,
+}
 
 interface Room {
     roomTitle: string,
@@ -16,7 +21,12 @@ interface SocketValue {
     joinRoom: () => void;
     sendMessage: (newMessage: string) => void;
     leaveRoom: () => void;
-    disconnect: () => void;
+    wholeMessage: WholeMessage[],
+    allMessages: [],
+    connect: () => void,
+    leaveChat: () => void;
+    getUsername: (username: string) => void
+
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
 
@@ -26,8 +36,8 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
-    const [allMessages, setAllMessages] = useState<any[]>([]);
-    
+    const [allMessages, setAllMessages] = useState<any>([] as WholeMessage[]);
+
     // Här ska alla skapta rum sparas. Däremot uppdateras inte denna när rum läggs till...
     const rooms: Room[] = []
     console.log('array', rooms)
@@ -43,46 +53,79 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             // Här läggs rummen till från server och sparas i const rooms som ligger ovanför.
             updatedChatRooms.forEach(room => rooms.push(room));
             console.log(rooms)
-        })
+        });
     };
 
     function joinRoom() {
         socket.emit('join-room', 'katt');
     }
 
-    function sendMessage(newMessage: string) {
-        socket.on('chat-message', () => {
-            setAllMessages([...allMessages, newMessage])
-            console.log([...allMessages, newMessage])
+    connect();
+    function connect() {
+        socket.on('user-connected', () => {
+            console.log('anslutning lyckad ');
         });
-        console.log('contexten nådd')
     };
-    //function sendMessage() {
+
+    function getUsername(username: string) {
+        setUsername(username);
+    };
+
+
+    function sendMessage(newMessage: string) {
+
+        // const content = {
+        //     // author: username,
+        //     message: newMessage
+        // }
+
+        socket.emit('send-message', newMessage); // newmessage får man ut meddelandet. content får man ut object object. 
+        setAllMessages([...allMessages, newMessage]) // denna gör ingeting??
+        // setNewMessage('');
+        console.log('sendMessage nådd')
+    };
+
+    useEffect(() => {
+        socket.on('receive-message', (data) => {
+            setAllMessages([...allMessages, data])
+            console.log([...allMessages, data])
+        });
+    }, [allMessages]);
+
+    // function sendMessage() {
     //    socket.emit('send-message', "David says hi!");
     //    console.log('sendMessage');
-    //}
+    // }
 
 
     function leaveRoom() {
         socket.emit('leave-room')
     }
 
-    function disconnect() {
+    function leaveChat() {
         socket.on('disconnect', () => {
-            console.log('anslutning upphörde ');
         });
+        socket.disconnect();
     }
 
     return (
         <SocketContext.Provider value={{
             rooms: [],
+            wholeMessage: [],
+
             username,
+            connect,
             saveUsername,
             createRoom,
             joinRoom,
+
             sendMessage,
+            allMessages,
+
             leaveRoom,
-            disconnect,
+            leaveChat,
+            getUsername,
+
         }}>
             { children}
         </SocketContext.Provider>

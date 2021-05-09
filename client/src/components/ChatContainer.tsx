@@ -2,7 +2,7 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, leaveRoom } = useContext(SocketContext);
+    const { sendMessage, allMessages, leaveRoom, username } = useContext(SocketContext);
     const [newMessage, setNewMessage] = useState('');
     const [ room ] = useState('Living room');
   
@@ -11,20 +11,22 @@ function ChatContainer() {
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
 
-        sendMessage(newMessage)
-        setNewMessage('');
-
+        
         // let messageContent = {
         //     // room: room,
         //     content: {
-        //         author: username,
-        //         message: newMessage
+        //         // author: username,
+        //         text: newMessage
         //     }
         // };
 
+
+        sendMessage(newMessage)
+        setNewMessage('');
+        window.scrollTo(0,document.body.scrollHeight);
+
         console.log(`newMessage: ${newMessage}`);
     };
-
 
     return (
         <div style={rootStyle}>
@@ -32,14 +34,20 @@ function ChatContainer() {
                 {room}
             </div>
             <button 
-            style={buttonStyle}
-            onClick={() => leaveRoom()}
+                style={buttonStyle}
+                onClick={() => leaveRoom()}
             >
                 Leave room
             </button>
             <div style={messageContainer}>
-                <p> säger: {sendMessage}</p>
-                <p>Här ska alla meddelande in</p>
+                <p>{username} säger: </p>
+                {allMessages.map(( newMessage, index) => {
+                    return (
+                        <div key={index} style={messageBox}>
+                            <p>{newMessage}</p>
+                        </div>
+                    )
+                })}
 
             </div>
             <form
@@ -79,7 +87,12 @@ const titleContainer: CSSProperties = {
 const messageContainer: CSSProperties = {
     height: '75%',
     margin: '0 1rem',
-    backgroundColor: 'grey',
+    backgroundColor: 'pink',
+};
+
+const messageBox: CSSProperties = {
+    background: 'white',
+    borderRadius: '.5rem',
 };
 
 const formContainer: CSSProperties = {

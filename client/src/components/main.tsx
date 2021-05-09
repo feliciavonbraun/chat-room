@@ -3,7 +3,13 @@ import ChatContainer from "./ChatContainer";
 import NewChatForm from "./NewChatForm";
 import Sidebar from "./Sidebar";
 
-function Main() {
+
+interface Props {
+    signOut: () => void;
+}
+
+
+function Main(props: Props) {
     const [showForm, setShowForm] = useState(false)
 
     function toggleNewChatForm() {
@@ -14,6 +20,7 @@ function Main() {
         <main style={rootStyle}>
            <Sidebar 
                 openForm={toggleNewChatForm} 
+                signOut={props.signOut}
             />
            {showForm 
             ?   <NewChatForm closeForm={toggleNewChatForm}/>

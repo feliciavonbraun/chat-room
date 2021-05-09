@@ -2,7 +2,7 @@ import { CSSProperties, useContext, useState } from "react"
 import { SocketContext } from "../contexts/socketProvider"
 
 interface Props {
-    logIn: () => void
+    signIn: () => void
 };
 
 function SignIn(props: Props) {
@@ -13,6 +13,9 @@ function SignIn(props: Props) {
         e.preventDefault()
         saveUsername(username)
         props.logIn()
+        getUsername(username)
+        joinRoom();
+        props.signIn()
     }
 
     return (
