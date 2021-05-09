@@ -4,14 +4,15 @@ import { SocketContext } from "../contexts/socketProvider"
 interface Props {
     signIn: () => void
 };
-// Fråga: Ska vi ha en gräns på att användarnamnet måste vara mer än ex. 3 bokstäver? 
 
 function SignIn(props: Props) {
     const [username, setUsername] = useState('')
-    const { joinRoom, getUsername } = useContext(SocketContext);
+    const { saveUsername } = useContext(SocketContext);
 
     function handleSignIn(e:React.FormEvent) {
         e.preventDefault()
+        saveUsername(username)
+        props.logIn()
         getUsername(username)
         joinRoom();
         props.signIn()

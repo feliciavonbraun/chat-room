@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
@@ -8,9 +8,12 @@ interface Props {
 }
 
 function Sidebar(props: Props) {
+    // Rooms är tom, trots att de pushas in i kontexten 'createRoom'...
+
     const [ room ] = useState('Living room');
-    const { username, leaveChat } = useContext(SocketContext);
+    const { username, leaveChat, rooms } = useContext(SocketContext);
     
+
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
@@ -28,9 +31,9 @@ function Sidebar(props: Props) {
             </button>
             <div style={roomsContainer}>
                 <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
-                <button style={roomButton}>{room}</button>
-                <button style={{...roomButton, ...activeRoomButton}}>TestRoom1</button>
-                <button style={roomButton}>TestRoom2</button>
+                {rooms.map((room) => 
+                    <button style={{...roomButton, ...activeRoomButton}}>{room.roomTitle}</button>
+                )}
             </div>
         </aside>
     );
