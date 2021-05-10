@@ -4,8 +4,6 @@ import { SocketContext } from "../contexts/socketProvider";
 
 interface Props {
     room: {roomName: string, password?: string | null}
-
-
 }
 
 function Rooms(props: Props, index: number) {
