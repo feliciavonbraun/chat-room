@@ -38,6 +38,7 @@ function NewChatForm(props: Props) {
                     type='text' 
                     style={inputStyle} 
                     onChange={(e) => setRoomName(e.target.value)} 
+                    required
                 />
 
                 <p style={{ marginBottom: '.3rem' }}>

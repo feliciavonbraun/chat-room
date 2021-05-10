@@ -13,7 +13,6 @@ function SignIn(props: Props) {
         e.preventDefault()
         setUsername(username)
         saveUsername(username)
-        //joinRoom();
         props.signIn()
     }
 

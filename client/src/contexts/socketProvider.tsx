@@ -32,8 +32,8 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<Message[]>([]);
+    const [rooms, setRooms] = useState<Room[]>([])
 
-    const [rooms] = useState<Room[]>([])
     
     function saveUsername(username: string) {
         setUsername(username);
@@ -59,8 +59,8 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         });
 
         socket.on('all-rooms', createdRooms => {
-            console.log(createdRooms)
-        })
+            setRooms(createdRooms);
+        });
             
         socket.on('disconnect', () => {});
     },[rooms]);
