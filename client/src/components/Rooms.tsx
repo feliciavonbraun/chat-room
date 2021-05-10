@@ -10,7 +10,6 @@ interface Props {
 
 function Rooms(props: Props, index: number) {
     const { joinRoom } = useContext(SocketContext);
-    console.log(props.room)
     return(
         <button
             key={index}
