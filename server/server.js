@@ -15,12 +15,7 @@ const io = new Server(server, {
 
 // ------------
 
-const allRooms = [
-    {
-        roomName: 'Living room',
-        password: null
-    }
-]
+const allRooms = []
 
 io.on('connection', (socket) => {
 
@@ -37,7 +32,7 @@ io.on('connection', (socket) => {
     
     /* JOIN ROOM */
     socket.on('join-room', (roomName, password) => {
-        const existingRoom = allRooms.some(theRoom => theRoom.roomName === roomName);
+        const existingRoom = allRooms.some(oneRoom => oneRoom.roomName === roomName);
         if(!existingRoom) {
             allRooms.push(
                 {
@@ -46,19 +41,17 @@ io.on('connection', (socket) => {
                 }
             )
         }
-        console.log(allRooms)
 
         socket.join(roomName);
         io.emit('all-rooms', allRooms);
         console.log(`User has joined room ${roomName}`);
     });
 
+
     /* LEAVE ROOM */
-    socket.on('leave-room', () => {
-        findUser = signedInUsers.find((user) => user = socket.id);
-        
-        console.log(findUser, 'has left room');
-        console.log(signedInUsers)
+    socket.on('leave-room', (roomName, username) => {
+        socket.leave(roomName, socket.id);
+        console.log(`${username} has left ${roomName}`);
     });
 
     /* DISCONNECT */
