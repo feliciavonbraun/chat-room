@@ -87,7 +87,7 @@ const messageContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    alignItems: 'flex-end'
+    // alignItems: 'flex-end'
 };
 
 const otherContainer: CSSProperties = {
@@ -104,7 +104,7 @@ const messageBox: CSSProperties = {
     borderRadius: '.5rem',
     margin: '.5rem',
     fontSize: '0.7rem',
-    width: '15rem',
+    // width: '15rem',
 };
 
 const formContainer: CSSProperties = {
