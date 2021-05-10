@@ -7,7 +7,7 @@ interface Props {
 
 function NewChatForm(props: Props) {
     const [privateChat, setPrivateChat] = useState(false)
-    const [chatName, setChatName] = useState('');
+    const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('')
 
     const { createRoom } = useContext(SocketContext);
@@ -16,9 +16,9 @@ function NewChatForm(props: Props) {
         e.preventDefault();
 
         if (password.length > 0){
-            createRoom(chatName, password);
+            createRoom(roomName, password);
         } else {
-            createRoom(chatName);
+            createRoom(roomName);
         };
     };
 
@@ -38,7 +38,7 @@ function NewChatForm(props: Props) {
                     id='chat-name' 
                     type='text' 
                     style={inputStyle} 
-                    onChange={(e) => setChatName(e.target.value)} 
+                    onChange={(e) => setRoomName(e.target.value)} 
                 />
 
                 <p style={{ marginBottom: '.3rem' }}>

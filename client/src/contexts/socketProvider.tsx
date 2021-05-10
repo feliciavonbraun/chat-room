@@ -4,16 +4,16 @@ import { createContext, FunctionComponent, useState } from "react";
 // Interface
 
 interface Room {
-    roomTitle: string,
-    password?: string
+    roomName: string,
+    password?: string | null,
 };
 
 interface SocketValue {
-    rooms: Room[],
+    allRooms: Room[],
     username: string,
     saveUsername: (username: string) => void,
     createRoom: (chatRoom: string, password?: string) => void;
-    joinRoom: () => void;
+    joinRoom: (roomName: string) => void;
     sendMessage: (newMessage: string) => void;
     leaveRoom: () => void;
     disconnect: () => void;
@@ -30,7 +30,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     
     // Här ska alla skapta rum sparas. Däremot uppdateras inte denna när rum läggs till...
     const rooms: Room[] = []
-    console.log('array', rooms)
 
     function saveUsername(username: string) {
         setUsername(username);
@@ -39,23 +38,21 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     function createRoom(newRoomName: string, _password?: string) {
         socket.emit('create-room', newRoomName, _password);
-        socket.on('create-room', (updatedChatRooms: []) => {
-            // Här läggs rummen till från server och sparas i const rooms som ligger ovanför.
-            updatedChatRooms.forEach(room => rooms.push(room));
+        socket.on('save-room', (allRooms) => {
+            rooms.push(allRooms)
             console.log(rooms)
-        })
+        });
+        joinRoom(newRoomName)
     };
 
-    function joinRoom() {
-        socket.emit('join-room', 'katt');
-    }
+    function joinRoom(roomName: string) {
+        socket.emit('join-room', roomName);
+    };
 
     function sendMessage(newMessage: string) {
         socket.on('chat-message', () => {
             setAllMessages([...allMessages, newMessage])
-            console.log([...allMessages, newMessage])
         });
-        console.log('contexten nådd')
     };
     //function sendMessage() {
     //    socket.emit('send-message', "David says hi!");
@@ -75,7 +72,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     return (
         <SocketContext.Provider value={{
-            rooms: [],
+            allRooms: [],
             username,
             saveUsername,
             createRoom,

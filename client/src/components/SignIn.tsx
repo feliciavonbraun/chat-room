@@ -10,10 +10,10 @@ function SignIn(props: Props) {
     const { saveUsername } = useContext(SocketContext);
 
     function handleSignIn(e:React.FormEvent) {
-        e.preventDefault()
-        saveUsername(username)
-        props.logIn()
-    }
+        e.preventDefault();
+        saveUsername(username);
+        props.logIn();
+    };
 
     return (
         <main style={rootStyle}>

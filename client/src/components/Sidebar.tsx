@@ -6,10 +6,11 @@ interface Props {
     openForm: () => void
 };
 
+// TODO: Mappa ut en knapp för varje rum
+
 function Sidebar(props: Props) {
-    const { username, rooms } = useContext(SocketContext);
-    // Rooms är tom, trots att de pushas in i kontexten 'createRoom'...
-    console.log(rooms)
+    const { username } = useContext(SocketContext);
+    
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
@@ -21,9 +22,8 @@ function Sidebar(props: Props) {
             </button>
             <div style={roomsContainer}>
                 <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
-                {rooms.map((room) => 
-                    <button style={{...roomButton, ...activeRoomButton}}>{room.roomTitle}</button>
-                )}
+                
+                <button style={{...roomButton, ...activeRoomButton}}>TITEL</button>
             </div>
         </aside>
     );

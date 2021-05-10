@@ -14,29 +14,34 @@ const io = new Server(server, {
 });
 
 // ------------
-let signedInUsers = [];
 
-const chatRooms = []
+const allRooms = [
+    {
+        roomName: 'Living room',
+        password: null,
+    },
+];
 
 io.on('connection', (socket) => {
 
-    socket.on('user-connected', username => {
-        user = socket.id
-        signedInUsers.push(user)
-        console.log(signedInUsers)
-        console.log('Signed in as: ', user)
+    socket.on('user-connected', (username) => {
+        userId = socket.id
+        console.log(`Username: ${username} with id: ${userId} signed in.`)
     }); 
 
     // 'CREATE ROOM'
-    socket.on('create-room', (roomTitle, _password) => {
-        chatRooms.push({
-            roomTitle: roomTitle,
-            password: _password,
-        });
+    socket.on('create-room', (roomName, _password) => {
+        console.log(`Room ${roomName} was created with password ${_password}`)
 
-        socket.emit('create-room', chatRooms);
-        console.log('skapat rum: ', roomTitle, _password);
-        console.log('Alla rum', chatRooms);
+        allRooms.push(
+            {
+                roomName: roomName,
+                password: _password
+            }
+        );
+        console.log(allRooms);
+
+        socket.emit('save-room', allRooms);
     });
 
     // SEND MESSAGE
@@ -45,9 +50,9 @@ io.on('connection', (socket) => {
     }); 
   
      /* JOIN ROOM */
-    socket.on('join-room', (data) => {
-        socket.join(data);
-        console.log('user has joined room ' + data);
+    socket.on('join-room', (roomName) => {
+        socket.join(roomName);
+        console.log(`User ${socket.id} has joined room ${roomName}`);
     });
 
     /* LEAVE ROOM */
