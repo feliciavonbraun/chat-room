@@ -3,8 +3,8 @@ import { createContext, FunctionComponent, useEffect, useState } from "react";
 
 // Interface
 
-export interface WholeMessage {
-    username?: string,
+export interface Message {
+    username: string,
     text: string,
 }
 
@@ -18,11 +18,10 @@ interface SocketValue {
     username: string,
     saveUsername: (username: string) => void,
     createRoom: (chatRoom: string, password?: string) => void;
-    joinRoom: () => void;
+    joinRoom: (chatRoom: string, password?: string) => void;
     sendMessage: (newMessage: string) => void;
     leaveRoom: () => void;
-    wholeMessage: WholeMessage[],
-    allMessages: [],
+    allMessages: Message[],
     connect: () => void,
     leaveChat: () => void;
     getUsername: (username: string) => void
@@ -36,7 +35,7 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 /* Context provider */
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
-    const [allMessages, setAllMessages] = useState<any>([] as WholeMessage[]);
+    const [allMessages, setAllMessages] = useState<Message[]>([]);
 
     // Här ska alla skapta rum sparas. Däremot uppdateras inte denna när rum läggs till...
     const rooms: Room[] = []
@@ -49,18 +48,14 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     function createRoom(newRoomName: string, _password?: string) {
         socket.emit('create-room', newRoomName, _password);
-        socket.on('create-room', (updatedChatRooms: []) => {
-            // Här läggs rummen till från server och sparas i const rooms som ligger ovanför.
-            updatedChatRooms.forEach(room => rooms.push(room));
-            console.log(rooms)
-        });
+        
     };
 
-    function joinRoom() {
-        socket.emit('join-room', 'katt');
+    function joinRoom(chatRoom: string, password?: string) {
+        socket.emit('join-room', chatRoom, password);
     }
 
-    connect();
+   
     function connect() {
         socket.on('user-connected', () => {
             console.log('anslutning lyckad ');
@@ -71,46 +66,36 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         setUsername(username);
     };
 
-    function sendMessage(newMessage: string) {
-
-        // const content = {
-        //     // author: username,
-        //     message: newMessage
-        // }
-
-        socket.emit('chat-message', newMessage); // newmessage får man ut meddelandet. content får man ut object object. 
-        setAllMessages([...allMessages, newMessage]) // denna gör ingeting??
+    function sendMessage(text: string) {
+        const message: Message = { username, text }
+        socket.emit('chat-message', message); // newmessage får man ut meddelandet. content får man ut object object. 
+        setAllMessages([...allMessages, message]) // denna gör ingeting??
         // setNewMessage('');
     };
 
     useEffect(() => {
-        socket.on('chat-message', function(data) {
-            setAllMessages([...allMessages, data])
+        // lägg till ON lyssnare här:
+        socket.on('chat-message', function(message: Message) {
+            setAllMessages((prevMessages) => [...prevMessages, message])
             window.scrollTo(0, document.body.scrollHeight) // funkar denna??
         })
-    });
-
-    // useEffect(() => {
-    //     socket.on('receive-message', (data) => {
-    //         setAllMessages([...allMessages, data])
-    //         console.log([...allMessages, data])
-    //     });
-    // }, [allMessages]);
+        socket.on('create-room', () => {
+            
+        });
+        socket.on('disconnect', () => {});
+    },[]);
 
     function leaveRoom() {
         socket.emit('leave-room')
     }
 
     function leaveChat() {
-        socket.on('disconnect', () => {
-        });
         socket.disconnect();
     }
 
     return (
         <SocketContext.Provider value={{
-            rooms: [],
-            wholeMessage: [],
+            rooms,
 
             username,
             connect,
@@ -124,7 +109,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             leaveRoom,
             leaveChat,
             getUsername,
-
         }}>
             { children}
         </SocketContext.Provider>
