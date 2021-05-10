@@ -71,7 +71,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         setUsername(username);
     };
 
-
     function sendMessage(newMessage: string) {
 
         // const content = {
@@ -79,24 +78,24 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         //     message: newMessage
         // }
 
-        socket.emit('send-message', newMessage); // newmessage får man ut meddelandet. content får man ut object object. 
+        socket.emit('chat-message', newMessage); // newmessage får man ut meddelandet. content får man ut object object. 
         setAllMessages([...allMessages, newMessage]) // denna gör ingeting??
         // setNewMessage('');
-        console.log('sendMessage nådd')
     };
 
     useEffect(() => {
-        socket.on('receive-message', (data) => {
+        socket.on('chat-message', function(data) {
             setAllMessages([...allMessages, data])
-            console.log([...allMessages, data])
-        });
-    }, [allMessages]);
+            window.scrollTo(0, document.body.scrollHeight) // funkar denna??
+        })
+    });
 
-    // function sendMessage() {
-    //    socket.emit('send-message', "David says hi!");
-    //    console.log('sendMessage');
-    // }
-
+    // useEffect(() => {
+    //     socket.on('receive-message', (data) => {
+    //         setAllMessages([...allMessages, data])
+    //         console.log([...allMessages, data])
+    //     });
+    // }, [allMessages]);
 
     function leaveRoom() {
         socket.emit('leave-room')

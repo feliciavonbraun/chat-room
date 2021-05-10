@@ -40,18 +40,14 @@ io.on('connection', (socket) => {
         console.log('Alla rum', chatRooms);
     });
 
-
     // MESSAGE
-    socket.on('send-message', (data) => {
+    socket.on('chat-message', (data) => {
+        socket.broadcast.emit('chat-message', data);
+
         console.log('consolelog servern:' + data)
     }); 
 
-    socket.on('receive-message', (data) => {
-        console.log('hela arrayen: ' + data )
-    });
-  
-
-     /* JOIN ROOM */
+    /* JOIN ROOM */
     socket.on('join-room', (data) => {
         socket.join(data);
         console.log('user has joined room ' + data);
