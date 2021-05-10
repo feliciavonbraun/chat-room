@@ -11,7 +11,6 @@ function ChatContainer() {
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
 
-        
         // let messageContent = {
         //     // room: room,
         //     content: {
@@ -19,7 +18,6 @@ function ChatContainer() {
         //         text: newMessage
         //     }
         // };
-
 
         sendMessage(newMessage)
         setNewMessage('');
@@ -40,15 +38,13 @@ function ChatContainer() {
                 Leave room
             </button>
             <div style={messageContainer}>
-                <p>{username} säger: </p>
                 {allMessages.map(( newMessage, index) => {
                     return (
                         <div key={index} style={messageBox}>
-                            <p>{newMessage}</p>
+                            <p>{username}:{newMessage}</p>
                         </div>
                     )
                 })}
-
             </div>
             <form
                 onSubmit={(e) => handleMessage(e)}
