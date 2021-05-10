@@ -15,6 +15,13 @@ const io = new Server(server, {
 
 // ------------
 
+const allRooms = [
+    {
+        roomName: 'Living room',
+        password: null
+    }
+]
+
 io.on('connection', (socket) => {
 
     socket.on('user-connected', username => {
@@ -29,10 +36,21 @@ io.on('connection', (socket) => {
     }); 
     
     /* JOIN ROOM */
-    socket.on('join-room', (roomName) => {
+    socket.on('join-room', (roomName, password) => {
+        const existingRoom = allRooms.some(theRoom => theRoom.roomName === roomName);
+        if(!existingRoom) {
+            allRooms.push(
+                {
+                    roomName: roomName,
+                    password: password
+                }
+            )
+        }
+        console.log(allRooms)
+
         socket.join(roomName);
-        io.emit('all-rooms', getAllRooms());
-        console.log('user has joined room ' + roomName);
+        io.emit('all-rooms', allRooms);
+        console.log(`User has joined room ${roomName}`);
     });
 
     /* LEAVE ROOM */
@@ -53,12 +71,17 @@ io.on('connection', (socket) => {
 });
 // ------------
 
-function getAllRooms() {
-    const { rooms } = io.sockets.adapter;
-    const keys = Object.keys(rooms);
-    console.log(keys)
-    console.log('Alla rum')
-}
+
+
+
+// function getAllRooms() {
+//     const { rooms } = io.sockets.adapter;
+//     const keys = Object.keys(rooms);
+//     console.log('Nycklar', keys)
+//     console.log('rum', rooms.keys())
+    
+//     return rooms
+// }
 
 
 server.listen(PORT, () => {

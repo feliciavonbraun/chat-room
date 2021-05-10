@@ -8,7 +8,7 @@ interface Props {
 }
 
 function Sidebar(props: Props) {
-    const { username, leaveChat } = useContext(SocketContext);
+    const { username, leaveChat, rooms } = useContext(SocketContext);
     
 
     return (
@@ -27,8 +27,10 @@ function Sidebar(props: Props) {
                 New Chat
             </button>
             <div style={roomsContainer}>
-                <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
-                <button style={{...roomButton, ...activeRoomButton}}>TITEL</button>
+                <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3>
+                {rooms.map((room, index) => 
+                    <button key={index} style={{...roomButton, ...activeRoomButton}}>{room.roomName}</button>
+                )} 
             </div>
         </aside>
     );
