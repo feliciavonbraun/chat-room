@@ -2,9 +2,8 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, allMessages, leaveRoom } = useContext(SocketContext);
+    const { sendMessage, allMessages, leaveRoom, activeChatRoom} = useContext(SocketContext);
     const [newMessage, setNewMessage] = useState('');
-    const [ room ] = useState('Living room');
   
     // TODO: Spara meddelanden och mappa ut i 'messageContainer'
 
@@ -29,7 +28,7 @@ function ChatContainer() {
     return (
         <div style={rootStyle}>
             <div style={titleContainer}>
-                {room}
+                {activeChatRoom}
             </div>
             <button 
                 style={buttonStyle}

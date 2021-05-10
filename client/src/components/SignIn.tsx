@@ -7,13 +7,13 @@ interface Props {
 
 function SignIn(props: Props) {
     const [username, setUsername] = useState('')
-    const { saveUsername } = useContext(SocketContext);
+    const { saveUsername, joinRoom } = useContext(SocketContext);
 
     function handleSignIn(e:React.FormEvent) {
         e.preventDefault()
         setUsername(username)
         saveUsername(username)
-        //joinRoom();
+        joinRoom('Living room')
         props.signIn()
     }
 

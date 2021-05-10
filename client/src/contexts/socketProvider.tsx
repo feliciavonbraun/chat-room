@@ -8,20 +8,20 @@ export interface Message {
     text: string,
 }
 
-// interface Room {
-//     roomTitle: string,
-//     password?: string
-// };
+interface Room {
+    roomName: string,
+    password?: string
+};
 
 interface SocketValue {
-    //rooms: Room[],
+    rooms: Room[],
+    activeChatRoom: string,
     username: string,
     saveUsername: (username: string) => void,
     joinRoom: (roomName: string, password?: string) => void;
     sendMessage: (newMessage: string) => void;
     leaveRoom: () => void;
     allMessages: Message[],
-    connect: () => void,
     leaveChat: () => void;
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
@@ -33,6 +33,8 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<Message[]>([]);
+    const [rooms, setRooms] = useState<Room[]>([])
+    const [activeChatRoom, setActiveChatRoom] = useState('');
 
     
     function saveUsername(username: string) {
@@ -40,12 +42,9 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.emit('user-connected', username);
     };
 
-    function connect() {
-        socket.emit('user-connected', username);
-    };
-
     function joinRoom(roomName: string, password?: string) {
         socket.emit('join-room', roomName, password);
+        setActiveChatRoom(roomName)
     }; 
 
     function sendMessage(text: string) {
@@ -62,16 +61,15 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             window.scrollTo(0, document.body.scrollHeight) // funkar denna??
         });
 
-        socket.on('all-rooms', getAllRooms => {
-            console.log(getAllRooms)
-        })
+        socket.on('all-rooms', createdRooms => {
+            setRooms(createdRooms);
+        });
             
-        
         socket.on('disconnect', () => {});
-    },[]);
+    },[rooms]);
 
     function leaveRoom() {
-        socket.emit('leave-room')
+        socket.emit('leave-room', activeChatRoom, username)
     }
 
     function leaveChat() {
@@ -80,8 +78,9 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     return (
         <SocketContext.Provider value={{
+            rooms,
+            activeChatRoom,
             username,
-            connect,
             saveUsername,
             joinRoom,
 
