@@ -2,7 +2,7 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, allMessages, leaveRoom, username } = useContext(SocketContext);
+    const { sendMessage, allMessages, leaveRoom } = useContext(SocketContext);
     const [newMessage, setNewMessage] = useState('');
     const [ room ] = useState('Living room');
   
@@ -38,10 +38,10 @@ function ChatContainer() {
                 Leave room
             </button>
             <div style={messageContainer}>
-                {allMessages.map(( newMessage, index) => {
+                {allMessages.map(({ username, text }, index) => {
                     return (
                         <div key={index} style={messageBox}>
-                            <p>{username}:{newMessage}</p>
+                            <p>{username}: {text}</p>
                         </div>
                     )
                 })}

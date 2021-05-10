@@ -21,11 +21,8 @@ const chatRooms = []
 io.on('connection', (socket) => {
 
 
-    socket.on('user-connected', username => {
-        user = socket.id
-        signedInUsers.push(user)
-        console.log(signedInUsers)
-        console.log('Signed in as: ', user)
+    socket.on('user-connected', () => {
+        
     }); 
 
     // 'CREATE ROOM'
@@ -35,21 +32,22 @@ io.on('connection', (socket) => {
             password: _password,
         });
 
-        socket.emit('create-room', chatRooms);
+        io.emit('all-rooms', chatRooms);
         console.log('skapat rum: ', roomTitle, _password);
         console.log('Alla rum', chatRooms);
     });
-
+    
     // MESSAGE
     socket.on('chat-message', (data) => {
         socket.broadcast.emit('chat-message', data);
-
+        
         console.log('consolelog servern:' + data)
     }); 
-
+    
     /* JOIN ROOM */
     socket.on('join-room', (data) => {
         socket.join(data);
+        io.emit('all-rooms', getAllRooms());
         console.log('user has joined room ' + data);
     });
 
@@ -65,10 +63,18 @@ io.on('connection', (socket) => {
     /* DISCONNECT */
     socket.on('disconnect', (data) => {
         console.log(data)
+        // todo: 
+        io.emit('all-rooms', chatRooms);
     });
 
 });
 // ------------
+
+function getAllRooms() {
+    const { rooms } = io.sockets.adapter;
+    const keys = Object.keys(rooms);
+    console.log(keys)
+}
 
 
 server.listen(PORT, () => {
