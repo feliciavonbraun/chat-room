@@ -10,7 +10,6 @@ interface Props {
 function Sidebar(props: Props) {
     // Rooms är tom, trots att de pushas in i kontexten 'createRoom'...
 
-    const [ room ] = useState('Living room');
     const { username, leaveChat, rooms } = useContext(SocketContext);
     
 
