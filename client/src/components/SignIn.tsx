@@ -11,10 +11,9 @@ function SignIn(props: Props) {
 
     function handleSignIn(e:React.FormEvent) {
         e.preventDefault()
+        setUsername(username)
         saveUsername(username)
-        props.logIn()
-        getUsername(username)
-        joinRoom();
+        //joinRoom();
         props.signIn()
     }
 
