@@ -39,7 +39,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     // Här ska alla skapta rum sparas. Däremot uppdateras inte denna när rum läggs till...
     const rooms: Room[] = []
-    console.log('array', rooms)
+    // console.log('array', rooms)
 
     function saveUsername(username: string) {
         setUsername(username);
@@ -67,9 +67,9 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     };
 
     function sendMessage(text: string) {
-        const message: Message = { username, text }
-        socket.emit('chat-message', message); // newmessage får man ut meddelandet. content får man ut object object. 
-        setAllMessages([...allMessages, message]) // denna gör ingeting??
+        const message: Message = { username, text };
+        socket.emit('chat-message', message);
+        setAllMessages([...allMessages, message]); // denna gör ingeting??
         // setNewMessage('');
     };
 
@@ -77,7 +77,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         // lägg till ON lyssnare här:
         socket.on('chat-message', function(message: Message) {
             setAllMessages((prevMessages) => [...prevMessages, message])
-            window.scrollTo(0, document.body.scrollHeight) // funkar denna??
         })
         socket.on('create-room', () => {
             
@@ -96,7 +95,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     return (
         <SocketContext.Provider value={{
             rooms,
-
             username,
             connect,
             saveUsername,

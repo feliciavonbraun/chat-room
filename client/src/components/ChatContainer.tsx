@@ -2,26 +2,17 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, allMessages, leaveRoom } = useContext(SocketContext);
+    const { sendMessage, allMessages, leaveRoom, username } = useContext(SocketContext);
     const [newMessage, setNewMessage] = useState('');
-    const [ room ] = useState('Living room');
-  
-    // TODO: Spara meddelanden och mappa ut i 'messageContainer'
+    const [room] = useState('Living room');
+    const you = username; // detta är det satta usernamet
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
 
-        // let messageContent = {
-        //     // room: room,
-        //     content: {
-        //         // author: username,
-        //         text: newMessage
-        //     }
-        // };
-
         sendMessage(newMessage)
         setNewMessage('');
-        window.scrollTo(0,document.body.scrollHeight);
+        window.scrollTo(0, document.body.scrollHeight);
 
         console.log(`newMessage: ${newMessage}`);
     };
@@ -31,17 +22,21 @@ function ChatContainer() {
             <div style={titleContainer}>
                 {room}
             </div>
-            <button 
+            <button
                 style={buttonStyle}
                 onClick={() => leaveRoom()}
             >
                 Leave room
             </button>
-            <div style={messageContainer}>
+            <div style={username === you ? messageContainer : otherContainer}> 
                 {allMessages.map(({ username, text }, index) => {
                     return (
-                        <div key={index} style={messageBox}>
-                            <p>{username}: {text}</p>
+                        <div key={index} style={messageBox} >
+                            {username === you ?
+                                <p style={{ display: 'flex', justifyContent: 'flex-end'}}>You: {text}</p>
+                                :
+                                <p style={{color: 'green'}}>{username}: {text}</p>
+                            }
                         </div>
                     )
                 })}
@@ -70,7 +65,7 @@ function ChatContainer() {
 
 const rootStyle: CSSProperties = {
     width: '100%',
-    height: '100vh',
+
 };
 
 const titleContainer: CSSProperties = {
@@ -81,14 +76,35 @@ const titleContainer: CSSProperties = {
 };
 
 const messageContainer: CSSProperties = {
-    height: '75%',
     margin: '0 1rem',
     backgroundColor: 'pink',
+
+    //detta borde räcka för scroll??!!
+    height: '20rem',
+    overflow: 'auto',
+    // overflow: 'scroll',
+
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end'
 };
+
+const otherContainer: CSSProperties = {
+
+    // denna nås aldrig pga usernamet
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start'
+}
 
 const messageBox: CSSProperties = {
     background: 'white',
     borderRadius: '.5rem',
+    margin: '.5rem',
+    fontSize: '0.7rem',
+    width: '15rem',
 };
 
 const formContainer: CSSProperties = {
