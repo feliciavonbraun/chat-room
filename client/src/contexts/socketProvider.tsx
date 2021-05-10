@@ -15,6 +15,7 @@ interface Room {
 
 interface SocketValue {
     rooms: Room[],
+    activeChatRoom: string,
     username: string,
     saveUsername: (username: string) => void,
     joinRoom: (roomName: string, password?: string) => void;
@@ -33,6 +34,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<Message[]>([]);
     const [rooms, setRooms] = useState<Room[]>([])
+    const [activeChatRoom, setActiveChatRoom] = useState('');
 
     
     function saveUsername(username: string) {
@@ -42,6 +44,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     function joinRoom(roomName: string, password?: string) {
         socket.emit('join-room', roomName, password);
+        setActiveChatRoom(roomName)
     }; 
 
     function sendMessage(text: string) {
@@ -66,7 +69,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     },[rooms]);
 
     function leaveRoom() {
-        socket.emit('leave-room')
+        socket.emit('leave-room', activeChatRoom, username)
     }
 
     function leaveChat() {
@@ -76,6 +79,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     return (
         <SocketContext.Provider value={{
             rooms,
+            activeChatRoom,
             username,
             saveUsername,
             joinRoom,
