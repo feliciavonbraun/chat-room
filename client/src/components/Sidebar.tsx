@@ -8,9 +8,7 @@ interface Props {
 }
 
 function Sidebar(props: Props) {
-    // Rooms är tom, trots att de pushas in i kontexten 'createRoom'...
-
-    const { username, leaveChat, rooms } = useContext(SocketContext);
+    const { username, leaveChat } = useContext(SocketContext);
     
 
     return (
@@ -30,9 +28,7 @@ function Sidebar(props: Props) {
             </button>
             <div style={roomsContainer}>
                 <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
-                {rooms.map((room) => 
-                    <button style={{...roomButton, ...activeRoomButton}}>{room.roomTitle}</button>
-                )}
+                <button style={{...roomButton, ...activeRoomButton}}>TITEL</button>
             </div>
         </aside>
     );
