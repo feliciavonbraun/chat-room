@@ -14,28 +14,12 @@ const io = new Server(server, {
 });
 
 // ------------
-let signedInUsers = [];
-
-const chatRooms = []
 
 io.on('connection', (socket) => {
 
-
-    socket.on('user-connected', () => {
-        
+    socket.on('user-connected', username => {
+        console.log(`Sign in: ${username}.`)
     }); 
-
-    // 'CREATE ROOM'
-    socket.on('create-room', (roomTitle, _password) => {
-        chatRooms.push({
-            roomTitle: roomTitle,
-            password: _password,
-        });
-
-        io.emit('all-rooms', chatRooms);
-        console.log('skapat rum: ', roomTitle, _password);
-        console.log('Alla rum', chatRooms);
-    });
     
     // MESSAGE
     socket.on('chat-message', (data) => {
@@ -45,14 +29,13 @@ io.on('connection', (socket) => {
     }); 
     
     /* JOIN ROOM */
-    socket.on('join-room', (data) => {
-        socket.join(data);
+    socket.on('join-room', (roomName) => {
+        socket.join(roomName);
         io.emit('all-rooms', getAllRooms());
-        console.log('user has joined room ' + data);
+        console.log('user has joined room ' + roomName);
     });
 
     /* LEAVE ROOM */
-
     socket.on('leave-room', () => {
         findUser = signedInUsers.find((user) => user = socket.id);
         
@@ -63,8 +46,8 @@ io.on('connection', (socket) => {
     /* DISCONNECT */
     socket.on('disconnect', (data) => {
         console.log(data)
-        // todo: 
-        io.emit('all-rooms', chatRooms);
+        // todo: Filtrera bort specifikt rum från 'alla rum'? 
+        io.emit('all-rooms', ); // chatRooms
     });
 
 });
@@ -74,6 +57,7 @@ function getAllRooms() {
     const { rooms } = io.sockets.adapter;
     const keys = Object.keys(rooms);
     console.log(keys)
+    console.log('Alla rum')
 }
 
 
