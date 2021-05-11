@@ -43,8 +43,7 @@ function ChatContainer() {
                 onSubmit={(e) => handleMessage(e)}
                 style={formContainer}
             >
-                <input
-                    type='text-area'
+                <textarea
                     placeholder='Message...'
                     style={inputStyle}
                     value={text}
@@ -74,8 +73,8 @@ const titleContainer: CSSProperties = {
 };
 
 const messageContainer: CSSProperties = {
-    backgroundColor: 'pink',
-    margin: '0 1rem',
+    backgroundColor: 'rgb(0, 219, 184)',
+    margin: '0 .5rem',
 
     display: 'flex',
     flexDirection: 'column',
@@ -84,7 +83,7 @@ const messageContainer: CSSProperties = {
 
     //detta borde räcka för scroll??!!
     // flexGrow: 1,
-    height: '20rem',
+    height: '25rem',
     // overflow: 'auto',
     overflowY: 'scroll',
 
@@ -93,18 +92,20 @@ const messageContainer: CSSProperties = {
 const othersMessages: CSSProperties = {
     background: 'white',
     borderRadius: '.5rem',
-    margin: '.5rem',
+    margin: '.3rem',
     fontSize: '0.7rem',
-    width: '10rem',
+    maxWidth: '70%',
+    padding: '0 .5rem',
     alignSelf: 'flex-start',
 };
 
 const yourMessages: CSSProperties = {
     background: 'lightblue',
-    borderRadius: '.5rem',
+    borderRadius: '.3rem',
     margin: '.5rem',
     fontSize: '0.7rem',
-    width: '10rem',
+    padding: '0 .5rem',
+    maxWidth: '70%',
 };
 
 const formContainer: CSSProperties = {
@@ -131,5 +132,6 @@ const buttonStyle: CSSProperties = {
     border: 'none',
     outline: 'none',
     boxShadow: '.1rem .1rem .3rem #00000020 inset',
+    background: 'rgb(0, 173, 239)',
 };
 export default ChatContainer;
