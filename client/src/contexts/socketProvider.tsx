@@ -1,12 +1,7 @@
 import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useEffect, useState } from "react";
 
-// Interface
 
-export interface Message {
-    username: string,
-    text: string,
-}
 
 interface OpenRoom {
     roomName: string,
@@ -16,9 +11,15 @@ interface LockedRoom {
     password: string,
 };
 
+export interface Message extends OpenRoom {
+    username: string,
+    text: string,
+};
+
 interface SocketValue {
     openRooms: OpenRoom[],
     lockedRooms: LockedRoom[],
+    allMessages: Message[],
     activeChatRoom: string,
     username: string,
     passwordResponse: boolean,
@@ -26,9 +27,8 @@ interface SocketValue {
     joinOpenRoom: (roomName: string) => void;
     joinLockedRoom: (roomName: string, password: string) => void;
     checkPassword: (roomName: string, password: string) => void;
-    sendMessage: (newMessage: string) => void;
+    sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
-    allMessages: Message[],
     leaveChat: () => void;
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
@@ -45,7 +45,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [activeChatRoom, setActiveChatRoom] = useState('');
     const [passwordResponse, setPasswordResponse] = useState(false);
 
-    
     function saveUsername(username: string) {
         setUsername(username);
         socket.emit('user-connected', username);
@@ -64,11 +63,13 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     function checkPassword(roomName: string, password: string) {
         socket.emit('check-password', roomName, password);
     };
-    
-    function sendMessage(text: string) {
-        const message: Message = { username, text }
-        socket.emit('chat-message', message); // newmessage får man ut meddelandet. content får man ut object object. 
-        setAllMessages([...allMessages, message]) // denna gör ingeting??
+        
+    function sendMessage(username: string, text: string, roomName: string, ) {
+        const message: Message = {
+            roomName, username, text 
+        };
+        socket.emit('chat-message', message);
+        setAllMessages([...allMessages, message]); // viktig ibland
         // setNewMessage('');
     };
 
@@ -76,7 +77,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         // lägg till ON lyssnare här:        
         socket.on('chat-message', function(message: Message) {
             setAllMessages((prevMessages) => [...prevMessages, message])
-            window.scrollTo(0, document.body.scrollHeight) // funkar denna??
         });
 
         socket.on('all-open-rooms', createdRooms => {
@@ -98,7 +98,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.on('disconnect', () => {});
     },[]);
 
-
     function leaveRoom() {
         socket.emit('leave-room', activeChatRoom, username)
     }
@@ -112,6 +111,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             openRooms,
             lockedRooms,
             activeChatRoom,
+
             username,
             passwordResponse,
             saveUsername,
