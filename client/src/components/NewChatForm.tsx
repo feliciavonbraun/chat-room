@@ -10,14 +10,14 @@ function NewChatForm(props: Props) {
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('')
 
-    const { joinRoom } = useContext(SocketContext);
+    const { joinOpenRoom, joinLockedRoom } = useContext(SocketContext);
 
     function createNewChat(e: React.FormEvent) {
         e.preventDefault();
         if (password.length > 0){
-            joinRoom(roomName, password);
+            joinLockedRoom(roomName, password);
         } else {
-            joinRoom(roomName);
+            joinOpenRoom(roomName);
         };
     };
 

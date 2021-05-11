@@ -15,7 +15,8 @@ const io = new Server(server, {
 
 // ------------
 
-const allRooms = []
+const openRooms = []
+const lockedRooms = []
 
 io.on('connection', (socket) => {
 
@@ -30,23 +31,49 @@ io.on('connection', (socket) => {
         console.log('consolelog servern:' + data)
     }); 
     
-    /* JOIN ROOM */
-    socket.on('join-room', (roomName, password) => {
-        const existingRoom = allRooms.some(oneRoom => oneRoom.roomName === roomName);
+    /* JOIN OPEN ROOM */
+    socket.on('join-open-room', (roomName) => {
+        const existingRoom = openRooms.some(oneRoom => oneRoom.roomName === roomName);
         if(!existingRoom) {
-            allRooms.push(
+            openRooms.push(
+                {
+                    roomName: roomName,
+                }
+            )
+        };
+
+        socket.join(roomName);
+        io.emit('all-open-rooms', openRooms);
+        console.log(`User has joined room ${roomName}`);
+    });
+
+    /* JOIN LOCKED ROOM */
+    socket.on('join-locked-room', (roomName, password) => {
+        const existingRoom = lockedRooms.some(oneRoom => oneRoom.roomName === roomName);
+        if(!existingRoom) {
+            lockedRooms.push(
                 {
                     roomName: roomName,
                     password: password
                 }
             )
-        }
+        };
 
         socket.join(roomName);
-        io.emit('all-rooms', allRooms);
+        io.emit('all-locked-rooms', lockedRooms);
         console.log(`User has joined room ${roomName}`);
     });
 
+    /* CHECK PASSWORD */
+    socket.on('check-password', (roomName, password) => {
+        const roomIndex = lockedRooms.findIndex((room) => room.roomName === roomName);
+        const correctPassword = lockedRooms[roomIndex].password
+        if (correctPassword === password) {
+            socket.emit('password-response', 'correct')
+        } else {
+            socket.emit('password-response', 'wrong')
+        }
+    });
 
     /* LEAVE ROOM */
     socket.on('leave-room', (roomName, username) => {
@@ -67,7 +94,7 @@ io.on('connection', (socket) => {
 
 
 
-// function getAllRooms() {
+// function getopenRooms() {
 //     const { rooms } = io.sockets.adapter;
 //     const keys = Object.keys(rooms);
 //     console.log('Nycklar', keys)
