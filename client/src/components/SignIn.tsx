@@ -1,5 +1,6 @@
 import { CSSProperties, useContext, useState } from "react"
 import { SocketContext } from "../contexts/socketProvider"
+import chatLogo from "../assets/chatLogo.svg"
 
 interface Props {
     signIn: () => void
@@ -20,7 +21,11 @@ function SignIn(props: Props) {
     return (
         <main style={rootStyle}>
             <div style={signInContainer}>
-                <h1>ChatALot</h1>
+                <img 
+                    src={chatLogo} 
+                    style={logoStyle}
+                    alt="ChatALot"
+                />
                 <form onSubmit={(e) => handleSignIn(e)} style={formStyle}>
                     <input 
                         type='text' 
@@ -63,6 +68,11 @@ const signInContainer: CSSProperties = {
     backgroundColor: 'white',
     borderRadius: '1rem',
     boxShadow: '.1rem .1rem .2rem #00000050 inset',
+};
+
+const logoStyle: CSSProperties = {
+    width: '50%',
+    padding: '1.5rem 0'
 };
 
 const formStyle: CSSProperties = {

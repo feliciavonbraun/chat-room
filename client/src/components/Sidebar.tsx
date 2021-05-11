@@ -1,6 +1,7 @@
 import { CSSProperties, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
+import chatLogo from "../assets/chatLogo.svg"
 
 interface Props {
     signOut: () => void;
@@ -35,7 +36,11 @@ function Sidebar(props: Props) {
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
-                <h2>ChatALot</h2>
+                <img 
+                    src={chatLogo} 
+                    style={logoStyle}
+                    alt="ChatALot" 
+                />
                 <h3 style={usernameStyle}>{username}</h3>
                 <button
                     style={{ ...buttonStyle, ...noBorderButtonStyle }}
@@ -125,7 +130,13 @@ const welcomeContainer: CSSProperties = {
 const usernameStyle: CSSProperties = {
     marginTop: '-.9rem',
     color: '#5C5C5C'
-}
+};
+
+const logoStyle: CSSProperties = {
+    width: '100%',
+    maxWidth: '15rem',
+    padding: '2rem 0',
+};
 
 const roomButtonsContainer: CSSProperties = {
     position: 'relative',
