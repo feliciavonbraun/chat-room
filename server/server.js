@@ -25,9 +25,10 @@ io.on('connection', (socket) => {
     
     // MESSAGE
     socket.on('chat-message', (data) => {
-        socket.broadcast.emit('chat-message', data);
-        
-        console.log('consolelog servern:' + data)
+        // socket.broadcast.emit('chat-message', data);
+        socket.in(data.roomName).emit('chat-message', data)
+
+        console.log( data.roomName + data)
     }); 
     
     /* JOIN ROOM */

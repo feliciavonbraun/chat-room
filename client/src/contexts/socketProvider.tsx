@@ -1,27 +1,25 @@
 import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useEffect, useState } from "react";
 
-// Interface
-
-export interface Message {
-    username: string,
-    text: string,
-}
-
 interface Room {
     roomName: string,
     password?: string
 };
 
+export interface Message extends Room {
+    username: string,
+    text: string,
+};
+
 interface SocketValue {
     rooms: Room[],
+    allMessages: Message[],
     activeChatRoom: string,
     username: string,
     saveUsername: (username: string) => void,
     joinRoom: (roomName: string, password?: string) => void;
-    sendMessage: (newMessage: string) => void;
+    sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
-    allMessages: Message[],
     leaveChat: () => void;
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
@@ -46,10 +44,12 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         setActiveChatRoom(roomName)
     }; 
 
-    function sendMessage(text: string) {
-        const message: Message = { username, text };
+    function sendMessage(username: string, text: string, roomName: string, ) {
+        const message: Message = {
+            roomName, username, text 
+        };
         socket.emit('chat-message', message);
-        setAllMessages([...allMessages, message]); // denna gör ingeting??
+        setAllMessages([...allMessages, message]); // viktig ibland
         // setNewMessage('');
     };
 
@@ -64,7 +64,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         });
             
         socket.on('disconnect', () => {});
-    },[rooms]);
+    },[]);
 
     function leaveRoom() {
         socket.emit('leave-room', activeChatRoom, username)
