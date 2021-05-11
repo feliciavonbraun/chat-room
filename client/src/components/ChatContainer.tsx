@@ -3,18 +3,18 @@ import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
     const { sendMessage, allMessages, leaveRoom, username, activeChatRoom } = useContext(SocketContext);
-    const [newMessage, setNewMessage] = useState('');
+    const [text, setText] = useState('');
     const you = username; // detta är det satta usernamet
 
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
 
-        sendMessage(newMessage)
-        setNewMessage('');
-        window.scrollTo(0, document.body.scrollHeight);
+        sendMessage(username, text, activeChatRoom)
+        setText('');
+        window.scrollTo(0, document.body.scrollHeight); // funkar ej 
 
-        console.log(`newMessage: ${newMessage}`);
+        console.log(`text: ${text}`);
     };
 
     return (
@@ -49,8 +49,8 @@ function ChatContainer() {
                     type='text'
                     placeholder='Message...'
                     style={inputStyle}
-                    value={newMessage}
-                    onChange={(event) => setNewMessage(event.target.value)}
+                    value={text}
+                    onChange={(event) => setText(event.target.value)}
                 />
                 <button
                     type='submit'
