@@ -36,7 +36,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [rooms, setRooms] = useState<Room[]>([])
     const [activeChatRoom, setActiveChatRoom] = useState('');
 
-    
     function saveUsername(username: string) {
         setUsername(username);
         socket.emit('user-connected', username);
@@ -48,9 +47,9 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     }; 
 
     function sendMessage(text: string) {
-        const message: Message = { username, text }
-        socket.emit('chat-message', message); // newmessage får man ut meddelandet. content får man ut object object. 
-        setAllMessages([...allMessages, message]) // denna gör ingeting??
+        const message: Message = { username, text };
+        socket.emit('chat-message', message);
+        setAllMessages([...allMessages, message]); // denna gör ingeting??
         // setNewMessage('');
     };
 
@@ -58,7 +57,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         // lägg till ON lyssnare här:        
         socket.on('chat-message', function(message: Message) {
             setAllMessages((prevMessages) => [...prevMessages, message])
-            window.scrollTo(0, document.body.scrollHeight) // funkar denna??
         });
 
         socket.on('all-rooms', createdRooms => {
@@ -80,6 +78,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         <SocketContext.Provider value={{
             rooms,
             activeChatRoom,
+
             username,
             saveUsername,
             joinRoom,
