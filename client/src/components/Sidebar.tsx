@@ -1,26 +1,25 @@
 import { CSSProperties } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
+import Rooms from './Rooms';
 
 interface Props {
-    signOut:() => void;
+    signOut: () => void;
     openForm: () => void
 }
 
 function Sidebar(props: Props) {
-    // Rooms är tom, trots att de pushas in i kontexten 'createRoom'...
-
     const { username, leaveChat, rooms } = useContext(SocketContext);
-    
+
 
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
                 <h2>ChatALot</h2>
                 <h3 style={usernameStyle}>{username}</h3>
-                <button 
+                <button
                     style={newChatButton}
-                    onClick={() => {leaveChat(); props.signOut()}}
+                    onClick={() => { leaveChat(); props.signOut() }}
                 >
                     Log out
                 </button>
@@ -29,9 +28,15 @@ function Sidebar(props: Props) {
                 New Chat
             </button>
             <div style={roomsContainer}>
-                <h3 style={{color: '#5C5C5C'}}>ChatRooms</h3> 
-                {rooms.map((room) => 
-                    <button style={{...roomButton, ...activeRoomButton}}>{room.roomTitle}</button>
+                <h3 style={{ color: '#5C5C5C' }}>ChatRooms</h3>
+                {rooms.map((room, index) => {
+                    return (
+                        <Rooms 
+                            key={index}
+                            room={room}
+                        />
+                    );
+                }
                 )}
             </div>
         </aside>
@@ -80,25 +85,6 @@ const roomsContainer: CSSProperties = {
     alignItems: 'center',
     height: '70%',
     width: '80%',
-};
-
-const roomButton: CSSProperties = {
-    width: '100%',
-    maxWidth: '12rem',
-    textAlign: 'center',
-    padding: '.5rem 0',
-    marginBottom: '.5rem',
-    borderRadius: '.3rem',
-    backgroundColor: 'white',
-    boxShadow: '-.3rem 0 .3rem #00000020 inset',
-    border: 'none',
-    outline: 'none',
-    cursor: 'pointer',
-};
-
-// Ska aktiveras på hover och click.
-const activeRoomButton: CSSProperties = {
-    backgroundColor: '#00ADEF',
 };
 
 

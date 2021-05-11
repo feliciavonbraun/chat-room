@@ -2,10 +2,10 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, allMessages, leaveRoom, username } = useContext(SocketContext);
+    const { sendMessage, allMessages, leaveRoom, username, activeChatRoom } = useContext(SocketContext);
     const [newMessage, setNewMessage] = useState('');
-    const [room] = useState('Living room');
     const you = username; // detta är det satta usernamet
+
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
@@ -20,7 +20,7 @@ function ChatContainer() {
     return (
         <div style={rootStyle}>
             <div style={titleContainer}>
-                {room}
+                {activeChatRoom}
             </div>
             <button
                 style={buttonStyle}
