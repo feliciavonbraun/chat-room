@@ -14,7 +14,7 @@ function ChatContainer() {
         setText('');
         window.scrollTo(0, document.body.scrollHeight); // funkar ej 
 
-        console.log(`text: ${text}`);
+        console.log(`${username} says '${text}' in: ${activeChatRoom}`);
     };
 
     return (
@@ -33,9 +33,13 @@ function ChatContainer() {
                     return (
                         <div key={index} style={messageBox} >
                             {username === you ?
-                                <p style={{ display: 'flex', justifyContent: 'flex-end'}}>You: {text}</p>
+                                // <div style={{display: 'flex', alignSelf: 'flex-end'}}>
+                                    <p style={{ display: 'flex', justifyContent: 'flex-end'}}>You: {text}</p>
+                                // </div>
                                 :
-                                <p style={{color: 'green'}}>{username}: {text}</p>
+                                <div>
+                                    <p style={{color: 'green'}}>{username}: {text}</p>
+                                </div>
                             }
                         </div>
                     )
@@ -80,6 +84,7 @@ const messageContainer: CSSProperties = {
     backgroundColor: 'pink',
 
     //detta borde räcka för scroll??!!
+    flexGrow: 1,
     height: '20rem',
     overflow: 'auto',
     // overflow: 'scroll',
@@ -104,7 +109,7 @@ const messageBox: CSSProperties = {
     borderRadius: '.5rem',
     margin: '.5rem',
     fontSize: '0.7rem',
-    // width: '15rem',
+    width: '15rem',
 };
 
 const formContainer: CSSProperties = {

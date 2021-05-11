@@ -25,8 +25,8 @@ io.on('connection', (socket) => {
     
     // MESSAGE
     socket.on('chat-message', (data) => {
-        socket.broadcast.emit('chat-message', data);
-        // io.in(data.roomName).emit('chat-message', data)
+        // socket.broadcast.emit('chat-message', data);
+        socket.in(data.roomName).emit('chat-message', data)
 
         console.log( data.roomName + data)
     }); 
