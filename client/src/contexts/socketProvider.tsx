@@ -49,7 +49,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             roomName, username, text 
         };
         socket.emit('chat-message', message);
-        setAllMessages([...allMessages, message]); // denna gör ingeting??
+        setAllMessages([...allMessages, message]); // viktig ibland
         // setNewMessage('');
     };
 

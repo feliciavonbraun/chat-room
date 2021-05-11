@@ -6,16 +6,14 @@ function ChatContainer() {
     const [text, setText] = useState('');
     const you = username; // detta är det satta usernamet
 
-
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
-
         sendMessage(username, text, activeChatRoom)
         setText('');
-        window.scrollTo(0, document.body.scrollHeight); // funkar ej 
-
         console.log(`${username} says '${text}' in: ${activeChatRoom}`);
     };
+
+    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
 
     return (
         <div style={rootStyle}>
@@ -28,18 +26,14 @@ function ChatContainer() {
             >
                 Leave room
             </button>
-            <div style={username === you ? messageContainer : otherContainer}> 
-                {allMessages.map(({ username, text }, index) => {
+            <div style={messageContainer}>
+                {roomMessages.map(({ username, text }, index) => {
                     return (
-                        <div key={index} style={messageBox} >
+                        <div key={index} style={username === you ? yourMessages : othersMessages} >
                             {username === you ?
-                                // <div style={{display: 'flex', alignSelf: 'flex-end'}}>
-                                    <p style={{ display: 'flex', justifyContent: 'flex-end'}}>You: {text}</p>
-                                // </div>
+                                <p> You: {text} </p>
                                 :
-                                <div>
-                                    <p style={{color: 'green'}}>{username}: {text}</p>
-                                </div>
+                                <p> {username}: {text} </p>
                             }
                         </div>
                     )
@@ -50,7 +44,7 @@ function ChatContainer() {
                 style={formContainer}
             >
                 <input
-                    type='text'
+                    type='text-area'
                     placeholder='Message...'
                     style={inputStyle}
                     value={text}
@@ -80,36 +74,37 @@ const titleContainer: CSSProperties = {
 };
 
 const messageContainer: CSSProperties = {
-    margin: '0 1rem',
     backgroundColor: 'pink',
+    margin: '0 1rem',
+
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
 
     //detta borde räcka för scroll??!!
-    flexGrow: 1,
+    // flexGrow: 1,
     height: '20rem',
-    overflow: 'auto',
-    // overflow: 'scroll',
+    // overflow: 'auto',
+    overflowY: 'scroll',
 
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    // alignItems: 'flex-end'
 };
 
-const otherContainer: CSSProperties = {
-
-    // denna nås aldrig pga usernamet
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-start'
-}
-
-const messageBox: CSSProperties = {
+const othersMessages: CSSProperties = {
     background: 'white',
     borderRadius: '.5rem',
     margin: '.5rem',
     fontSize: '0.7rem',
-    width: '15rem',
+    width: '10rem',
+    alignSelf: 'flex-start',
+};
+
+const yourMessages: CSSProperties = {
+    background: 'lightblue',
+    borderRadius: '.5rem',
+    margin: '.5rem',
+    fontSize: '0.7rem',
+    width: '10rem',
 };
 
 const formContainer: CSSProperties = {
