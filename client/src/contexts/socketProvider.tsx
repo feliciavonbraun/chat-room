@@ -111,9 +111,9 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             openRooms,
             lockedRooms,
             activeChatRoom,
-
             username,
             passwordResponse,
+            
             saveUsername,
             joinOpenRoom,
             joinLockedRoom,

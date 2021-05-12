@@ -14,7 +14,7 @@ function NewChatForm(props: Props) {
 
     function createNewChat(e: React.FormEvent) {
         e.preventDefault();
-        if (password.length > 0){
+        if (password.length > 0) {
             joinLockedRoom(roomName, password);
         } else {
             joinOpenRoom(roomName);
@@ -22,77 +22,80 @@ function NewChatForm(props: Props) {
     };
 
     return (
-        <div style={rootStyle}>
-            <div style={titleContainer}>
-                Create New Chat
-            </div>
-            <form 
-                style={formStyle} 
-                onSubmit={(e) => { createNewChat(e); props.closeForm() }}
-            >
-                <label htmlFor='chat-name'>
-                    Chat name
-                </label>
-                <input 
-                    id='chat-name' 
-                    type='text' 
-                    style={inputStyle} 
-                    onChange={(e) => setRoomName(e.target.value)} 
-                    required
-                />
-
-                <p style={{ marginBottom: '.3rem' }}>
-                    Private chat
-                </p>
-                <div>
-                    <input 
-                        onClick={() => setPrivateChat(true)} 
-                        type="radio" 
-                        id='yes' 
-                        name='private' 
-                    />
-                    <label htmlFor='yes'>
-                        Yes
-                    </label>
+        <div style={{ width: '100%', padding: '0 1rem', }}>
+            <div style={rootStyle}>
+                <div style={titleContainer}>
+                    <h2>Create New Chat</h2>
                 </div>
-                <div>
-                    <input 
-                        onClick={() => setPrivateChat(false)} 
-                        type="radio" 
-                        id='no' 
-                        name='private' 
-                    />
-                    <label htmlFor='no'>
-                        No
-                    </label>
-                </div>
-
-                {privateChat && (
-                    <div style={passwordContainer}>
-                        <label htmlFor='password'>
-                            Password
-                        </label>
-                        <input 
-                            onChange={(e) => setPassword(e.target.value)}
-                            id='password' 
-                            type='text' 
-                            style={inputStyle}  
-                        />
-                    </div>
-                )}
-                <button 
-                    style={formButtonStyle} 
-                    type='submit'
+                <form
+                    style={formStyle}
+                    onSubmit={(e) => { createNewChat(e); props.closeForm() }}
                 >
-                    Create Chat
+                    <label htmlFor='chat-name'>
+                        Chat name
+                    </label>
+                    <input
+                        id='chat-name'
+                        type='text'
+                        style={inputStyle}
+                        onChange={(e) => setRoomName(e.target.value)}
+                        required
+                    />
+
+                    <p style={{ marginBottom: '.3rem' }}>
+                        Private chat
+                </p>
+                    <div>
+                        <input
+                            onClick={() => setPrivateChat(true)}
+                            type="radio"
+                            id='yes'
+                            name='private'
+                        />
+                        <label htmlFor='yes'>
+                            Yes
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            onClick={() => setPrivateChat(false)}
+                            type="radio"
+                            id='no'
+                            name='private'
+                        />
+                        <label htmlFor='no'>
+                            No
+                        </label>
+                    </div>
+
+                    {privateChat && (
+                        <div style={passwordContainer}>
+                            <label htmlFor='password'>
+                                Password
+                            </label>
+                            <input
+                                onChange={(e) => setPassword(e.target.value)}
+                                id='password'
+                                type='text'
+                                style={inputStyle}
+                                required
+                            />
+                        </div>
+                    )}
+                    <button
+                        style={formButtonStyle}
+                        type='submit'
+                    >
+                        Create Chat
+                    </button>
+                </form>
+                <button
+                    onClick={props.closeForm}
+                    style={cancelButtonStyle}
+                >
+                    Cancel
                 </button>
-            </form>
-            <button 
-                onClick={props.closeForm} 
-                style={cancelButtonStyle}
-            >
-                Cancel
-            </button>
+            </div>
         </div>
     )
 };
@@ -101,14 +104,16 @@ const rootStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    height: '100vh',
+    maxWidth: '50rem',
+    margin: '0 auto',
 };
 
 const titleContainer: CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '10%',
+    margin: '2rem 0 1.5rem',
+    color: '#5C5C5C',
 };
 
 const formStyle: CSSProperties = {
