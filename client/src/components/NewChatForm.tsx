@@ -44,7 +44,7 @@ function NewChatForm(props: Props) {
 
                     <p style={{ marginBottom: '.3rem' }}>
                         Private chat
-                </p>
+                    </p>
                     <div>
                         <input
                             onClick={() => setPrivateChat(true)}
