@@ -95,14 +95,24 @@ io.on('connection', (socket) => {
 function updateRoomsLists() {
     for (const room of openRooms) {
         if (!io.sockets.adapter.rooms.get(room.roomName)) {
-            // to då bort rummet från er lista, SPLICE
-        }
+            openRooms.splice(openRooms.indexOf(room), 1)
+        } 
+    }
+
+    for (const room of lockedRooms) {
+        if (!io.sockets.adapter.rooms.get(room.roomName)) {
+            lockedRooms.splice(lockedRooms.indexOf(room), 1)
+        } 
     }
 
 
     io.emit('all-open-rooms', openRooms);
     io.emit('all-locked-rooms', lockedRooms);
 }
+
+// function getAllRooms() {
+//     return openRooms;
+// }
 
 
 server.listen(PORT, () => {
