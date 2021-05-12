@@ -28,7 +28,7 @@ interface SocketValue {
     joinLockedRoom: (roomName: string, password: string) => void;
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
-    leaveChat: () => void;
+    leaveApp: () => void;
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
 
@@ -101,7 +101,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.emit('leave-room', activeChatRoom, username)
     }
 
-    function leaveChat() {
+    function leaveApp() {
         socket.disconnect();
     }
 
@@ -121,7 +121,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             allMessages,
 
             leaveRoom,
-            leaveChat,
+            leaveApp,
         }}>
             { children}
         </SocketContext.Provider>
