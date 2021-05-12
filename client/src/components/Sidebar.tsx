@@ -10,9 +10,10 @@ interface Props {
 function Sidebar(props: Props) {
     const {
         username,
-        leaveChat,
         openRooms,
         lockedRooms,
+        passwordResponse,
+        leaveChat,
         joinOpenRoom,
         joinLockedRoom,
         checkPassword,
@@ -29,8 +30,16 @@ function Sidebar(props: Props) {
 
     function comparePassword() {
         checkPassword(clickedRoom, inputPassword);
-        joinLockedRoom(clickedRoom, inputPassword);
+        
+        setInputPassword('')
+        if (passwordResponse === true) {
+            joinLockedRoom(clickedRoom, inputPassword);
+            setShowPasswordInput(false)
+        } else {
+            console.log('Fel lösenord')
+        }
     };
+
 
     return (
         <aside style={rootStyle}>
@@ -64,10 +73,10 @@ function Sidebar(props: Props) {
                     </button>
                 ))}
             </div>
+            <h3 style={{ color: '#5C5C5C' }}>
+                Private Chat Rooms
+            </h3>
             <div style={roomButtonsContainer}>
-                <h3 style={{ color: '#5C5C5C' }}>
-                    Private Chat Rooms
-                </h3>
                 {lockedRooms.map((room, index) => (
                     <button
                         key={index}
@@ -82,8 +91,9 @@ function Sidebar(props: Props) {
                     <div style={passwordInputContainer}>
                         <label>{`Chat Room: ${clickedRoom}`}</label>
                         <input
-                            type='text'
+                            type='password'
                             style={inputStyle}
+                            value={inputPassword}
                             placeholder='Enter password'
                             onChange={(e) => setInputPassword(e.target.value)}
                         />
@@ -137,7 +147,6 @@ const roomButtonsContainer: CSSProperties = {
 
 const passwordInputContainer: CSSProperties = {
     position: 'absolute',
-    top: '3.5rem',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
