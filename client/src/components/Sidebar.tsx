@@ -15,7 +15,7 @@ function Sidebar(props: Props) {
         lockedRooms,
         activeChatRoom,
         passwordResponse,
-        leaveChat,
+        leaveApp,
         joinOpenRoom,
         joinLockedRoom,
         checkPassword,
@@ -54,7 +54,7 @@ function Sidebar(props: Props) {
                 <h3 style={usernameStyle}>{username}</h3>
                 <button
                     style={{ ...buttonStyle, ...noBorderButtonStyle }}
-                    onClick={() => { leaveChat(); props.signOut() }}
+                    onClick={() => { leaveApp(); props.signOut() }}
                 >
                     Sign out
                 </button>
