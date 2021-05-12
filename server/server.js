@@ -27,16 +27,14 @@ io.on('connection', (socket) => {
         console.log(`Sign in: ${username}.`)
     }); 
     
-    // MESSAGE
+    /* SEND AND RECEIVE MESSEGES */
     socket.on('chat-message', (data) => {
-        // socket.broadcast.emit('chat-message', data);
         socket.in(data.roomName).emit('chat-message', data)
-
         console.log( data.roomName + data)
     }); 
     
     /* JOIN OPEN ROOM */
-    socket.on('join-open-room', (roomName) => {
+    socket.on('join-open-room', (roomName, username) => {
         const existingRoom = openRooms.some(oneRoom => oneRoom.roomName === roomName);
         if(!existingRoom) {
             openRooms.push(
@@ -48,7 +46,8 @@ io.on('connection', (socket) => {
 
         socket.join(roomName);
         io.emit('all-open-rooms', openRooms);
-        console.log(`User has joined room ${roomName}`);
+        socket.broadcast.emit('event-notification', (`${username} has joined ${roomName}`)); 
+        console.log(`User has joined open room ${roomName}`);
     });
 
     /* JOIN LOCKED ROOM */
@@ -70,8 +69,9 @@ io.on('connection', (socket) => {
 
         socket.join(roomName);
         io.emit('all-locked-rooms', lockedRooms);
-        socket.emit('join-locked-room-response', { roomName, success: true })
-        console.log(`User has joined room ${roomName}`);
+        socket.emit('join-locked-room-response', { roomName, success: true });
+        socket.broadcast.emit('event-notification', (`${username} has joined ${roomName}`)); 
+        console.log(`User has joined locked room ${roomName}`);
     });
 
     /* CHECK PASSWORD */
@@ -84,6 +84,7 @@ io.on('connection', (socket) => {
     /* LEAVE ROOM */
     socket.on('leave-room', (roomName, username) => {
         socket.leave(roomName, socket.id);
+        socket.broadcast.emit('event-notification', (`${username} has left ${roomName}`));
         console.log(`${username} has left ${roomName}`);
     });
 

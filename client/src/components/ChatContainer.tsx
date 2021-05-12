@@ -2,7 +2,15 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, allMessages, leaveRoom, username, activeChatRoom } = useContext(SocketContext);
+    const { 
+        sendMessage, 
+        allMessages, 
+        leaveRoom, 
+        username, 
+        activeChatRoom, 
+        eventNotification 
+    } = useContext(SocketContext);
+
     const [text, setText] = useState('');
     const you = username; // detta är det satta usernamet
 
@@ -46,7 +54,9 @@ function ChatContainer() {
                                     :
                                     <p style={othersNames}>{username}</p>
                                 }
-                        </div>
+                                <p>{eventNotification}</p> 
+                        </div> 
+                        // skapa en funktion som gör att eventNotification tömms 
                     ))
                     }
                 </div>
