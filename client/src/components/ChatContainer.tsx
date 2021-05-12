@@ -4,6 +4,7 @@ import { SocketContext } from "../contexts/socketProvider";
 function ChatContainer() {
     const { sendMessage, allMessages, leaveRoom, username, activeChatRoom } = useContext(SocketContext);
     const [text, setText] = useState('');
+    const [userLeftRoom, setUserLeftRoom] = useState(false);
     const you = username; // detta är det satta usernamet
 
     function handleMessage(e: React.FormEvent) {
@@ -19,54 +20,68 @@ function ChatContainer() {
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
+    function handleLeaveRoom() {
+        setUserLeftRoom(true);
+
+    }
+
     const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
 
     return (
         <div style={{ width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
-                <div style={topChatStyle}>
-                    <button
-                        style={{ ...buttonStyle, ...leaveButtonStyle }}
-                        onClick={() => leaveRoom()}
-                    >
-                        Leave room
-                    </button>
-                    <h2 style={roomNameStyle}>
-                        {activeChatRoom}
-                    </h2>
-                </div>
-                <div style={chatContainer} id='scrollContainer'>
-                    {roomMessages.map(({ username, text }, index) => (
-                        <div key={index} style={messageContainer} >
-                            <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
-                                {text}
-                            </div>
-                                {username === you ?
-                                    <p style={yourName}>You</p>
-                                    :
-                                    <p style={othersNames}>{username}</p>
-                                }
+                {userLeftRoom
+
+                    ? <div></div>
+
+                    : <div>
+                        <div style={topChatStyle}>
+                            {activeChatRoom !== 'Living room' && (
+                                <button
+                                    style={{ ...buttonStyle, ...leaveButtonStyle }}
+                                    onClick={() => { leaveRoom(); handleLeaveRoom() }}
+                                >
+                                    Leave room
+                                </button>
+                            )}
+                            <h2 style={roomNameStyle}>
+                                {activeChatRoom}
+                            </h2>
                         </div>
-                    ))
-                    }
-                </div>
-                <form
-                    onSubmit={(e) => handleMessage(e)}
-                    style={formContainer}
-                >
-                    <input
-                        placeholder='Message...'
-                        style={inputStyle}
-                        value={text}
-                        onChange={(event) => setText(event.target.value)}
-                    />
-                    <button
-                        type='submit'
-                        style={buttonStyle}
-                    >
-                        Send
-                    </button>
-                </form>
+                        <div style={chatContainer} id='scrollContainer'>
+                            {roomMessages.map(({ username, text }, index) => (
+                                <div key={index} style={messageContainer} >
+                                    <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                        {text}
+                                    </div>
+                                    {username === you ?
+                                        <p style={yourName}>You</p>
+                                        :
+                                        <p style={othersNames}>{username}</p>
+                                    }
+                                </div>
+                            ))
+                            }
+                        </div>
+                        <form
+                            onSubmit={(e) => handleMessage(e)}
+                            style={formContainer}
+                        >
+                            <input
+                                placeholder='Message...'
+                                style={inputStyle}
+                                value={text}
+                                onChange={(event) => setText(event.target.value)}
+                            />
+                            <button
+                                type='submit'
+                                style={buttonStyle}
+                            >
+                                Send
+                        </button>
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     );

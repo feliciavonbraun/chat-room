@@ -1,9 +1,7 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-
 const PORT = 4000;
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -12,6 +10,8 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
     }
 });
+
+
 
 // ------------
 
@@ -25,20 +25,18 @@ io.on('connection', (socket) => {
 
     socket.on('user-connected', username => {
         console.log(`Sign in: ${username}.`)
-    }); 
-    
-    // MESSAGE
-    socket.on('chat-message', (data) => {
-        // socket.broadcast.emit('chat-message', data);
-        socket.in(data.roomName).emit('chat-message', data)
+    });
 
-        console.log( data.roomName + data)
-    }); 
-    
+    /* MESSAGE */
+    socket.on('chat-message', (data) => {
+        socket.in(data.roomName).emit('chat-message', data)
+        console.log(data.roomName + data)
+    });
+
     /* JOIN OPEN ROOM */
     socket.on('join-open-room', (roomName) => {
         const existingRoom = openRooms.some(oneRoom => oneRoom.roomName === roomName);
-        if(!existingRoom) {
+        if (!existingRoom) {
             openRooms.push(
                 {
                     roomName: roomName,
@@ -49,12 +47,13 @@ io.on('connection', (socket) => {
         socket.join(roomName);
         io.emit('all-open-rooms', openRooms);
         console.log(`User has joined room ${roomName}`);
+        // fundera på om socket.leaveAll() behövs!
     });
 
     /* JOIN LOCKED ROOM */
     socket.on('join-locked-room', (roomName, password) => {
         const existingRoom = lockedRooms.some(oneRoom => oneRoom.roomName === roomName);
-        if(!existingRoom) {
+        if (!existingRoom) {
             lockedRooms.push(
                 {
                     roomName: roomName,
@@ -83,32 +82,27 @@ io.on('connection', (socket) => {
 
     /* LEAVE ROOM */
     socket.on('leave-room', (roomName, username) => {
-        socket.leave(roomName, socket.id);
         console.log(`${username} has left ${roomName}`);
-    });
+        socket.leave(roomName, socket.id);
+        updateRoomsLists();
 
-    /* DISCONNECT */
-    socket.on('disconnect', (data) => {
-        console.log(data)
-        // todo: se till att uppdatera rumslistorna först (dvs ev ta bort rummet)
-        io.emit('all-open-rooms', openRooms);
-        io.emit('all-locked-rooms', lockedRooms);
     });
 
 });
 // ------------
 
 
+function updateRoomsLists() {
+    for (const room of openRooms) {
+        if (!io.sockets.adapter.rooms.get(room.roomName)) {
+            // to då bort rummet från er lista, SPLICE
+        }
+    }
 
 
-// function getopenRooms() {
-//     const { rooms } = io.sockets.adapter;
-//     const keys = Object.keys(rooms);
-//     console.log('Nycklar', keys)
-//     console.log('rum', rooms.keys())
-    
-//     return rooms
-// }
+    io.emit('all-open-rooms', openRooms);
+    io.emit('all-locked-rooms', lockedRooms);
+}
 
 
 server.listen(PORT, () => {

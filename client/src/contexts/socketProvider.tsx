@@ -1,8 +1,6 @@
 import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useEffect, useState } from "react";
 
-
-
 interface OpenRoom {
     roomName: string,
 };
@@ -28,8 +26,8 @@ interface SocketValue {
     joinLockedRoom: (roomName: string, password: string) => void;
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
-    leaveApp: () => void;
 };
+
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
 
 /* Create context */
@@ -58,17 +56,14 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.emit('join-locked-room', roomName, password);
     }; 
 
-    // function checkPassword(roomName: string, password: string) {
-    //     socket.emit('check-password', roomName, password);
-    // };
         
     function sendMessage(username: string, text: string, roomName: string, ) {
         const message: Message = {
             roomName, username, text 
         };
         socket.emit('chat-message', message);
-        setAllMessages([...allMessages, message]); // viktig ibland
-        // setNewMessage('');
+        setAllMessages([...allMessages, message]); 
+
     };
 
     useEffect(() => {
@@ -93,16 +88,10 @@ const SocketProvider: FunctionComponent = ({ children }) => {
                 setIsCorrectPassword(false);
             }
         });
-            
-        socket.on('disconnect', () => {});
     }, []);
 
     function leaveRoom() {
-        socket.emit('leave-room', activeChatRoom, username)
-    }
-
-    function leaveApp() {
-        socket.disconnect();
+        socket.emit('leave-room', activeChatRoom, username);
     }
 
     return (
@@ -121,7 +110,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             allMessages,
 
             leaveRoom,
-            leaveApp,
         }}>
             { children}
         </SocketContext.Provider>
