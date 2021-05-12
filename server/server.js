@@ -20,6 +20,9 @@ const lockedRooms = []
 
 io.on('connection', (socket) => {
 
+    socket.emit('all-open-rooms', openRooms);
+    socket.emit('all-locked-rooms', lockedRooms);
+
     socket.on('user-connected', username => {
         console.log(`Sign in: ${username}.`)
     }); 
@@ -60,21 +63,23 @@ io.on('connection', (socket) => {
             )
         };
 
+        if (!checkPassword(roomName, password)) {
+            socket.emit('join-locked-room-response', { roomName, success: false })
+            return;
+        }
+
         socket.join(roomName);
         io.emit('all-locked-rooms', lockedRooms);
+        socket.emit('join-locked-room-response', { roomName, success: true })
         console.log(`User has joined room ${roomName}`);
     });
 
     /* CHECK PASSWORD */
-    socket.on('check-password', (roomName, password) => {
+    const checkPassword = (roomName, password) => {
         const roomIndex = lockedRooms.findIndex((room) => room.roomName === roomName);
-        const correctPassword = lockedRooms[roomIndex].password
-        if (correctPassword === password) {
-            socket.emit('password-response', 'correct')
-        } else {
-            socket.emit('password-response', 'wrong')
-        }
-    });
+        const correctPassword = lockedRooms[roomIndex]?.password
+        return correctPassword && correctPassword === password;
+    };
 
     /* LEAVE ROOM */
     socket.on('leave-room', (roomName, username) => {
@@ -85,8 +90,9 @@ io.on('connection', (socket) => {
     /* DISCONNECT */
     socket.on('disconnect', (data) => {
         console.log(data)
-        // todo: Filtrera bort specifikt rum från 'alla rum'? 
-        io.emit('all-rooms', ); // chatRooms
+        // todo: se till att uppdatera rumslistorna först (dvs ev ta bort rummet)
+        io.emit('all-open-rooms', openRooms);
+        io.emit('all-locked-rooms', lockedRooms);
     });
 
 });

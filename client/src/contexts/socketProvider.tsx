@@ -22,11 +22,10 @@ interface SocketValue {
     allMessages: Message[],
     activeChatRoom: string,
     username: string,
-    passwordResponse: boolean,
+    isCorrectPassword?: boolean,
     saveUsername: (username: string) => void,
     joinOpenRoom: (roomName: string) => void;
     joinLockedRoom: (roomName: string, password: string) => void;
-    checkPassword: (roomName: string, password: string) => void;
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
     leaveApp: () => void;
@@ -43,7 +42,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [openRooms, setOpenRooms] = useState<OpenRoom[]>([])
     const [lockedRooms, setLockedRooms] = useState<LockedRoom[]>([])
     const [activeChatRoom, setActiveChatRoom] = useState('');
-    const [passwordResponse, setPasswordResponse] = useState(false);
+    const [isCorrectPassword, setIsCorrectPassword] = useState<boolean>(true);
 
     function saveUsername(username: string) {
         setUsername(username);
@@ -57,12 +56,11 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     function joinLockedRoom(roomName: string, password: string) {
         socket.emit('join-locked-room', roomName, password);
-        setActiveChatRoom(roomName)
     }; 
 
-    function checkPassword(roomName: string, password: string) {
-        socket.emit('check-password', roomName, password);
-    };
+    // function checkPassword(roomName: string, password: string) {
+    //     socket.emit('check-password', roomName, password);
+    // };
         
     function sendMessage(username: string, text: string, roomName: string, ) {
         const message: Message = {
@@ -87,16 +85,17 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             setLockedRooms(createdRooms);
         });
 
-        socket.on('password-response', response => {
-            if (response === 'correct') {
-                setPasswordResponse(true);
+        socket.on('join-locked-room-response', ({ roomName, success }) => {
+            if (success) {
+                setActiveChatRoom(roomName);
+                setIsCorrectPassword(true);
             } else {
-                setPasswordResponse(false);
+                setIsCorrectPassword(false);
             }
         });
             
         socket.on('disconnect', () => {});
-    },[]);
+    }, []);
 
     function leaveRoom() {
         socket.emit('leave-room', activeChatRoom, username)
@@ -112,12 +111,11 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             lockedRooms,
             activeChatRoom,
             username,
-            passwordResponse,
+            isCorrectPassword,
             
             saveUsername,
             joinOpenRoom,
             joinLockedRoom,
-            checkPassword,
 
             sendMessage,
             allMessages,

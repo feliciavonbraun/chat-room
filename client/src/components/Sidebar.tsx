@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 import chatLogo from "../assets/chatLogo.svg"
@@ -14,37 +14,41 @@ function Sidebar(props: Props) {
         openRooms,
         lockedRooms,
         activeChatRoom,
-        passwordResponse,
         leaveApp,
+        isCorrectPassword,
         joinOpenRoom,
         joinLockedRoom,
-        checkPassword,
     } = useContext(SocketContext);
 
     const [showPasswordInput, setShowPasswordInput] = useState(false);
     const [inputPassword, setInputPassword] = useState('');
     const [clickedRoom, setClickedRoom] = useState('');
+    const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+    // Ej klar
+    useEffect(() => {
+        setWindowSize(window.innerWidth)
+    }, [])
 
     function openPasswordInput(roomName: string) {
         setClickedRoom(roomName)
         setShowPasswordInput(true)
     };
 
-    function comparePassword() {
-        checkPassword(clickedRoom, inputPassword);   
+    function handleJoinLockedRoom() {
+        joinLockedRoom(clickedRoom, inputPassword);   
         setInputPassword('')
-
-        if (passwordResponse === true) {
-            joinLockedRoom(clickedRoom, inputPassword);
-            setShowPasswordInput(false)
-        } else {
-            console.log('Wrong password')
-        }
     };
 
+    useEffect(() => {
+        if (isCorrectPassword) {
+            setShowPasswordInput(false)
+        }
+    }, [isCorrectPassword])
+    
 
     return (
-        <aside style={rootStyle}>
+        <aside style={windowSize > 655 ? rootStyle : {...rootStyle, ...rootStyleMobile}}>
             <div style={welcomeContainer}>
                 <img 
                     src={chatLogo} 
@@ -67,7 +71,7 @@ function Sidebar(props: Props) {
                     New Chat
                 </button>
                 <h3 style={{ color: '#5C5C5C' }}>
-                    Chat Rooms
+                    Chat
                 </h3>
                 {openRooms.map((room, index) => (
                     <button
@@ -83,7 +87,7 @@ function Sidebar(props: Props) {
                 ))}
             </div>
             <h3 style={{ color: '#5C5C5C' }}>
-                Private Chat Rooms
+                Private Chat
             </h3>
             <div style={roomButtonsContainer}>
                 {lockedRooms.map((room, index) => (
@@ -109,9 +113,10 @@ function Sidebar(props: Props) {
                             placeholder='Enter password'
                             onChange={(e) => setInputPassword(e.target.value)}
                         />
+                        {!isCorrectPassword && <span>Fel lösenord, försök igen</span>}
                         <button
                             style={{ ...buttonStyle, ...passwordButtonStyle }}
-                            onClick={comparePassword}
+                            onClick={handleJoinLockedRoom}
                         >
                             Join
                         </button>
@@ -133,8 +138,13 @@ const rootStyle: CSSProperties = {
     flexDirection: 'column',
     alignItems: 'center',
     width: '40%',
+    minWidth: '15rem',
     height: '100vh',
     boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
+};
+
+const rootStyleMobile: CSSProperties = {
+    backgroundColor: 'pink',
 };
 
 const welcomeContainer: CSSProperties = {
