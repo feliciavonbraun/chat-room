@@ -117,7 +117,7 @@ const rootStyle: CSSProperties = {
     alignItems: 'center',
     width: '40%',
     height: '100vh',
-    boxShadow: '-.3rem 0 .3rem #00000020 inset',
+    boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
 };
 
 const welcomeContainer: CSSProperties = {

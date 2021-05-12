@@ -10,116 +10,145 @@ function ChatContainer() {
         e.preventDefault();
         sendMessage(username, text, activeChatRoom)
         setText('');
-        console.log(`${username} says '${text}' in: ${activeChatRoom}`);
+        ScrollToNewMessage();
+    };
+
+    // TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
+    function ScrollToNewMessage() {
+        const scrollContainer = document.getElementById('scrollContainer');
+        scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
     const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
 
     return (
-        <div style={rootStyle}>
-            <div style={titleContainer}>
-                {activeChatRoom}
-            </div>
-            <button
-                style={buttonStyle}
-                onClick={() => leaveRoom()}
-            >
-                Leave room
-            </button>
-            <div style={messageContainer}>
-                {roomMessages.map(({ username, text }, index) => {
-                    return (
-                        <div key={index} style={username === you ? yourMessages : othersMessages} >
-                            {username === you ?
-                                <p> You: {text} </p>
-                                :
-                                <p> {username}: {text} </p>
-                            }
+        <div style={{ width: '100%', padding: '0 1rem', }}>
+            <div style={rootStyle}>
+                <div style={topChatStyle}>
+                    <button
+                        style={{ ...buttonStyle, ...leaveButtonStyle }}
+                        onClick={() => leaveRoom()}
+                    >
+                        Leave room
+                    </button>
+                    <h2 style={roomNameStyle}>
+                        {activeChatRoom}
+                    </h2>
+                </div>
+                <div style={chatContainer} id='scrollContainer'>
+                    {roomMessages.map(({ username, text }, index) => (
+                        <div key={index} style={messageContainer} >
+                            <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                {text}
+                            </div>
+                                {username === you ?
+                                    <p style={yourName}>You</p>
+                                    :
+                                    <p style={othersNames}>{username}</p>
+                                }
                         </div>
-                    )
-                })}
-            </div>
-            <form
-                onSubmit={(e) => handleMessage(e)}
-                style={formContainer}
-            >
-                <textarea
-                    placeholder='Message...'
-                    style={inputStyle}
-                    value={text}
-                    onChange={(event) => setText(event.target.value)}
-                />
-                <button
-                    type='submit'
-                    style={buttonStyle}
+                    ))
+                    }
+                </div>
+                <form
+                    onSubmit={(e) => handleMessage(e)}
+                    style={formContainer}
                 >
-                    Send
-                </button>
-            </form>
+                    <input
+                        placeholder='Message...'
+                        style={inputStyle}
+                        value={text}
+                        onChange={(event) => setText(event.target.value)}
+                    />
+                    <button
+                        type='submit'
+                        style={buttonStyle}
+                    >
+                        Send
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };
 
 const rootStyle: CSSProperties = {
     width: '100%',
-
+    maxWidth: '50rem',
+    margin: '0 auto',
 };
 
-const titleContainer: CSSProperties = {
+const topChatStyle: CSSProperties = {
+    position: 'relative',
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-    height: '10%',
+    margin: '2.5rem 0 1.5rem',
+};
+
+const roomNameStyle: CSSProperties = {
+    textAlign: 'center',
+    margin: '0 auto',
+    color: '#5C5C5C',
+};
+
+const chatContainer: CSSProperties = {
+    padding: '.5rem',
+    boxShadow: '.1rem .05rem .2rem #00000020 inset',
+    borderRadius: '.3rem',
+    height: '60vh',
+    overflowY: 'scroll',
 };
 
 const messageContainer: CSSProperties = {
-    backgroundColor: 'rgb(0, 219, 184)',
-    margin: '0 .5rem',
-
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-
-    //detta borde räcka för scroll??!!
-    // flexGrow: 1,
-    height: '25rem',
-    // overflow: 'auto',
-    overflowY: 'scroll',
-
 };
 
-const othersMessages: CSSProperties = {
-    background: 'white',
-    borderRadius: '.5rem',
-    margin: '.3rem',
-    fontSize: '0.7rem',
-    maxWidth: '70%',
-    padding: '0 .5rem',
-    alignSelf: 'flex-start',
+const messageStyle: CSSProperties = {
+    fontSize: '0.8rem',
+    padding: '.3rem .5rem',
+    margin: '.4rem 0 0',
+    borderRadius: '.3rem',
+    boxShadow: '.1rem .05rem .2rem #00000040',
 };
 
 const yourMessages: CSSProperties = {
-    background: 'lightblue',
-    borderRadius: '.3rem',
-    margin: '.5rem',
+    alignSelf: 'flex-end',
+    backgroundColor: '#00A6F6',
+    color: 'white',
+};
+
+const othersMessages: CSSProperties = {
+    alignSelf: 'flex-start',
+    background: '#EEEEEE',
+};
+
+const yourName: CSSProperties = {
+    alignSelf: 'flex-end',
+    margin: '0 .3rem .5rem 0',
+    color: '#5C5C5C',
     fontSize: '0.7rem',
-    padding: '0 .5rem',
-    maxWidth: '70%',
+};
+
+const othersNames: CSSProperties = {
+    alignSelf: 'flex-start',
+    margin: '0 0 .5rem .3rem',
+    color: '#5C5C5C',
+    fontSize: '0.7rem',
 };
 
 const formContainer: CSSProperties = {
+    height: '2rem',
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    height: '15%',
-    padding: '0 1rem',
+    padding: '1rem 0',
 };
 
 const inputStyle: CSSProperties = {
     width: '75%',
-    borderRadius: '.5rem',
+    borderRadius: '.3rem',
     padding: '.5rem',
+    marginRight: '.3rem',
     border: 'none',
     outline: 'none',
     boxShadow: '.1rem .05rem .2rem #00000040 inset',
@@ -127,11 +156,22 @@ const inputStyle: CSSProperties = {
 
 const buttonStyle: CSSProperties = {
     width: '20%',
+    minWidth: '5.5rem',
+    maxWidth: '10rem',
     borderRadius: '.3rem',
     padding: '.3rem',
     border: 'none',
     outline: 'none',
     boxShadow: '.1rem .1rem .3rem #00000020 inset',
-    background: 'rgb(0, 173, 239)',
+    backgroundColor: '#09DCBB',
+    color: 'white',
+    cursor: 'pointer',
 };
+
+const leaveButtonStyle: CSSProperties = {
+    position: 'absolute',
+    backgroundColor: 'white',
+    color: '#5C5C5C',
+};
+
 export default ChatContainer;
