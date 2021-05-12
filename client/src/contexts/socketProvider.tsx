@@ -23,9 +23,10 @@ interface SocketValue {
     activeChatRoom: string,
     username: string,
     isCorrectPassword?: boolean,
+    eventNotification: string,
     saveUsername: (username: string) => void,
-    joinOpenRoom: (roomName: string) => void;
-    joinLockedRoom: (roomName: string, password: string) => void;
+    joinOpenRoom: (roomName: string, username: string) => void;
+    joinLockedRoom: (roomName: string, password: string, username: string) => void;
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
     leaveApp: () => void;
@@ -43,24 +44,21 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [lockedRooms, setLockedRooms] = useState<LockedRoom[]>([])
     const [activeChatRoom, setActiveChatRoom] = useState('');
     const [isCorrectPassword, setIsCorrectPassword] = useState<boolean>(true);
+    const [eventNotification, setEventNotification] = useState('');
 
     function saveUsername(username: string) {
         setUsername(username);
         socket.emit('user-connected', username);
     };
 
-    function joinOpenRoom(roomName: string) {
-        socket.emit('join-open-room', roomName);
+    function joinOpenRoom(roomName: string, username: string) {
+        socket.emit('join-open-room', roomName, username);
         setActiveChatRoom(roomName)
     };
 
-    function joinLockedRoom(roomName: string, password: string) {
-        socket.emit('join-locked-room', roomName, password);
+    function joinLockedRoom(roomName: string, password: string, username: string) {
+        socket.emit('join-locked-room', roomName, password, username);
     }; 
-
-    // function checkPassword(roomName: string, password: string) {
-    //     socket.emit('check-password', roomName, password);
-    // };
         
     function sendMessage(username: string, text: string, roomName: string, ) {
         const message: Message = {
@@ -68,7 +66,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         };
         socket.emit('chat-message', message);
         setAllMessages([...allMessages, message]); // viktig ibland
-        // setNewMessage('');
     };
 
     useEffect(() => {
@@ -83,6 +80,10 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
         socket.on('all-locked-rooms', createdRooms => {
             setLockedRooms(createdRooms);
+        });
+
+        socket.on('event-notification', eventNotification => {
+            setEventNotification(eventNotification)
         });
 
         socket.on('join-locked-room-response', ({ roomName, success }) => {
@@ -112,6 +113,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             activeChatRoom,
             username,
             isCorrectPassword,
+            eventNotification,
             
             saveUsername,
             joinOpenRoom,
