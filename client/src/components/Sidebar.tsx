@@ -1,6 +1,7 @@
 import { CSSProperties, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
+import chatLogo from "../assets/chatLogo.svg"
 
 interface Props {
     signOut: () => void;
@@ -12,6 +13,7 @@ function Sidebar(props: Props) {
         username,
         openRooms,
         lockedRooms,
+        activeChatRoom,
         passwordResponse,
         leaveChat,
         joinOpenRoom,
@@ -29,14 +31,14 @@ function Sidebar(props: Props) {
     };
 
     function comparePassword() {
-        checkPassword(clickedRoom, inputPassword);
-        
+        checkPassword(clickedRoom, inputPassword);   
         setInputPassword('')
+
         if (passwordResponse === true) {
             joinLockedRoom(clickedRoom, inputPassword);
             setShowPasswordInput(false)
         } else {
-            console.log('Fel lösenord')
+            console.log('Wrong password')
         }
     };
 
@@ -44,7 +46,11 @@ function Sidebar(props: Props) {
     return (
         <aside style={rootStyle}>
             <div style={welcomeContainer}>
-                <h2>ChatALot</h2>
+                <img 
+                    src={chatLogo} 
+                    style={logoStyle}
+                    alt="ChatALot" 
+                />
                 <h3 style={usernameStyle}>{username}</h3>
                 <button
                     style={{ ...buttonStyle, ...noBorderButtonStyle }}
@@ -66,7 +72,10 @@ function Sidebar(props: Props) {
                 {openRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={{ ...buttonStyle, ...activeButtonStyle }}
+                        style={room.roomName === activeChatRoom 
+                            ? { ...buttonStyle, ...activeButtonStyle } 
+                            : buttonStyle
+                        }
                         onClick={() => joinOpenRoom(room.roomName)}
                     >
                         {room.roomName}
@@ -80,7 +89,10 @@ function Sidebar(props: Props) {
                 {lockedRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={{ ...buttonStyle, ...activeButtonStyle }}
+                        style={room.roomName === activeChatRoom 
+                            ? { ...buttonStyle, ...activeButtonStyle } 
+                            : buttonStyle
+                        }
                         onClick={() => openPasswordInput(room.roomName)}
                         id={room.roomName}
                     >
@@ -122,7 +134,7 @@ const rootStyle: CSSProperties = {
     alignItems: 'center',
     width: '40%',
     height: '100vh',
-    boxShadow: '-.3rem 0 .3rem #00000020 inset',
+    boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
 };
 
 const welcomeContainer: CSSProperties = {
@@ -135,7 +147,13 @@ const welcomeContainer: CSSProperties = {
 const usernameStyle: CSSProperties = {
     marginTop: '-.9rem',
     color: '#5C5C5C'
-}
+};
+
+const logoStyle: CSSProperties = {
+    width: '100%',
+    maxWidth: '15rem',
+    padding: '2rem 0',
+};
 
 const roomButtonsContainer: CSSProperties = {
     position: 'relative',
@@ -153,10 +171,12 @@ const passwordInputContainer: CSSProperties = {
     height: '100%',
     width: '100%',
     backgroundColor: 'white',
+    color: '#00ADEF',
+    fontWeight: 'bold',
 };
 
 const inputStyle: CSSProperties = {
-    width: '100%',
+    width: '65%',
     borderRadius: '.5rem',
     padding: '.5rem',
     margin: '.5rem',
@@ -173,7 +193,7 @@ const buttonStyle: CSSProperties = {
     marginBottom: '.5rem',
     borderRadius: '.3rem',
     backgroundColor: 'white',
-    boxShadow: '-.3rem 0 .3rem #00000020 inset',
+    boxShadow: '.1rem .1rem .3rem #00000020 inset',
     border: 'none',
     outline: 'none',
     cursor: 'pointer',
@@ -182,23 +202,27 @@ const buttonStyle: CSSProperties = {
 const noBorderButtonStyle: CSSProperties = {
     boxShadow: 'none',
     padding: '0',
+    color: '#00ADEF',
 };
 
 const newChatButtonStyle: CSSProperties = {
     width: '80%',
     maxWidth: '10rem',
-    backgroundColor: '#00DBB8',
-    color: 'white',
     marginTop: '3rem',
-}
+    boxShadow: '0 .1rem .4rem #00000020',
+    backgroundColor: 'white',
+    color: '#5C5C5C',
+};
 
 const passwordButtonStyle: CSSProperties = {
     width: '80%',
     maxWidth: '10rem',
-    margin: '.5rem 0 .7rem'
+    margin: '.5rem 0 .7rem',
+    boxShadow: '.1rem .1rem .3rem #00000020',
+    backgroundColor: '#00DBB8',
+    color: 'white',
 };
 
-// Todo: Ska aktiveras på hover och click.
 const activeButtonStyle: CSSProperties = {
     backgroundColor: '#00ADEF',
     color: 'white',
