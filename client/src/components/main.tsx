@@ -11,6 +11,7 @@ interface Props {
 
 function Main(props: Props) {
     const [showForm, setShowForm] = useState(false)
+    const [leaveCurrentRoom, setLeaveCurrentRoom] = useState(false) //byt namn sen
 
     function toggleNewChatForm() {
         setShowForm(!showForm);
@@ -21,10 +22,14 @@ function Main(props: Props) {
            <Sidebar 
                 openForm={toggleNewChatForm} 
                 signOut={props.signOut}
+                joinChat={() => setLeaveCurrentRoom(false)}
             />
            {showForm 
             ?   <NewChatForm closeForm={toggleNewChatForm}/>
-            :   <ChatContainer />
+            :   <ChatContainer 
+                    leaveChat={leaveCurrentRoom}
+                    setLeaveChat={() => setLeaveCurrentRoom(true)}
+                />
            }
         </main>
     );

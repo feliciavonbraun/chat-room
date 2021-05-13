@@ -6,6 +6,7 @@ import chatLogo from "../assets/chatLogo.svg"
 interface Props {
     signOut: () => void;
     openForm: () => void
+    joinChat: () => void;
 };
 
 function Sidebar(props: Props) {
@@ -84,7 +85,7 @@ function Sidebar(props: Props) {
                             ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => joinOpenRoom(room.roomName, username)}
+                        onClick={() => {joinOpenRoom(room.roomName, username); props.joinChat()}}
                     >
                         {room.roomName}
                     </button>
@@ -101,7 +102,7 @@ function Sidebar(props: Props) {
                             ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => openPasswordInput(room.roomName)}
+                        onClick={() => {openPasswordInput(room.roomName); props.joinChat()}}
                         id={room.roomName}
                     >
                         {room.roomName}
