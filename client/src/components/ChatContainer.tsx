@@ -32,7 +32,7 @@ function ChatContainer() {
             <div style={rootStyle}>
                 {userLeftRoom
 
-                    ? <div></div>
+                    ? <div>Här ska typ livingroom komma in igen eller nå</div>
 
                     : <div>
                         <div style={topChatStyle}>
