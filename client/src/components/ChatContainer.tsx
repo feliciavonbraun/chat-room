@@ -1,5 +1,7 @@
 import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
+import Lottie from 'react-lottie';
+import animationData from '../assets/waiting.json';
 
 interface Props {
     leaveChat: boolean;
@@ -33,13 +35,43 @@ function ChatContainer(props: Props) {
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animationData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    }
+
+
 
     return (
         <div style={{ width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
                 {props.leaveChat
                     ?
-                    <div>Här ska typ livingroom komma in igen eller nå</div>
+                    <div style={middlePage}>
+                        <p>
+                            Hey {username}!
+                        </p>
+                        <p>
+                            You are currently not in a room,
+                        </p>
+                        <p>
+                             choose one to keep chatting!
+                        </p>
+                        <p>
+                            /Fred
+                        </p>
+                        <div style={lottieBox}>
+                            <Lottie
+                                options={defaultOptions}
+                                height={200}
+                                width={200}
+                            />
+                        </div>
+                    </div>
                     :
                     <div>
                         <div style={topChatStyle}>
@@ -115,6 +147,20 @@ const topChatStyle: CSSProperties = {
     alignItems: 'center',
     margin: '2.5rem 0 1.5rem',
 };
+
+const middlePage: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '10rem',
+    alignContent: 'center',
+    textAlign: 'center'
+
+}
+
+const lottieBox: CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+}
 
 const roomNameStyle: CSSProperties = {
     textAlign: 'center',
