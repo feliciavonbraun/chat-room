@@ -1,8 +1,6 @@
 import { io } from 'socket.io-client';
 import { createContext, FunctionComponent, useEffect, useState } from "react";
 
-
-
 interface OpenRoom {
     roomName: string,
 };
@@ -31,6 +29,7 @@ interface SocketValue {
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
 };
+
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
 
 /* Create context */
@@ -65,6 +64,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         sendEventMessage(roomName, eventNotification)
     }; 
 
+
     function sendEventMessage(roomName: string, eventNotification: string) {
         const message: Message = {
             roomName,
@@ -88,6 +88,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
         const eventNotification = `${username} has left room`;
         sendEventMessage(activeChatRoom, eventNotification);
+
     };
 
     useEffect(() => {
@@ -116,8 +117,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
                 setIsCorrectPassword(false);
             }
         });
-            
-        socket.on('disconnect', () => {});
     }, []);
 
     return (

@@ -1,9 +1,7 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-
 const PORT = 4000;
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -12,6 +10,7 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
     }
 });
+
 
 // ------------
 
@@ -22,8 +21,9 @@ io.on('connection', (socket) => {
 
     socket.emit('all-open-rooms', openRooms);
     socket.emit('all-locked-rooms', lockedRooms);
+
     
-    /* SEND MESSAGES */
+    /* SEND AND RECIEVE MESSAGES */
     socket.on('chat-message', (data) => {
         socket.in(data.roomName).emit('send-message', data)
     }); 
@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
     /* JOIN OPEN ROOM */
     socket.on('join-open-room', (roomName, username) => {
         const existingRoom = openRooms.some(oneRoom => oneRoom.roomName === roomName);
-        if(!existingRoom) {
+        if (!existingRoom) {
             openRooms.push(
                 {
                     roomName: roomName,
@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
     /* JOIN LOCKED ROOM */
     socket.on('join-locked-room', (roomName, password) => {
         const existingRoom = lockedRooms.some(oneRoom => oneRoom.roomName === roomName);
-        if(!existingRoom) {
+        if (!existingRoom) {
             lockedRooms.push(
                 {
                     roomName: roomName,
@@ -84,30 +84,30 @@ io.on('connection', (socket) => {
         socket.leave(roomName, socket.id);
         socket.broadcast.emit('event-notification', (`${username} has left ${roomName}`));
         console.log(`${username} has left ${roomName}`);
+        socket.leave(roomName, socket.id);
+        updateRoomsLists();
     });
-
-    /* DISCONNECT */
-    socket.on('disconnect', (data) => {
-        console.log(data)
-        // todo: se till att uppdatera rumslistorna först (dvs ev ta bort rummet)
-        io.emit('all-open-rooms', openRooms);
-        io.emit('all-locked-rooms', lockedRooms);
-    });
-
 });
+
 // ------------
 
 
+function updateRoomsLists() {
+    for (const room of openRooms) {
+        if (!io.sockets.adapter.rooms.get(room.roomName)) {
+            openRooms.splice(openRooms.indexOf(room), 1)
+        } 
+    }
 
+    for (const room of lockedRooms) {
+        if (!io.sockets.adapter.rooms.get(room.roomName)) {
+            lockedRooms.splice(lockedRooms.indexOf(room), 1)
+        } 
+    }
 
-// function getopenRooms() {
-//     const { rooms } = io.sockets.adapter;
-//     const keys = Object.keys(rooms);
-//     console.log('Nycklar', keys)
-//     console.log('rum', rooms.keys())
-    
-//     return rooms
-// }
+    io.emit('all-open-rooms', openRooms);
+    io.emit('all-locked-rooms', lockedRooms);
+}
 
 
 server.listen(PORT, () => {

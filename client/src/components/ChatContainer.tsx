@@ -14,6 +14,7 @@ function ChatContainer() {
     const you = username;
     const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
 
+
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
         sendMessage(username, text, activeChatRoom)
@@ -27,63 +28,69 @@ function ChatContainer() {
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
-
     return (
         <div style={{ width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
-                <div style={topChatStyle}>
-                    <button
-                        style={{ ...buttonStyle, ...leaveButtonStyle }}
-                        onClick={() => leaveRoom()}
-                    >
-                        Leave room
-                    </button>
-                    <h2 style={roomNameStyle}>
-                        {activeChatRoom}
-                    </h2>
-                </div>
-                <div style={chatContainer} id='scrollContainer'>
-                    {roomMessages.map(({ username, text, eventNotification }, index) => (
-                        <div key={index}>
-                            {eventNotification
-                                ?
-                                <p style={notificationMessageStyle}>
-                                    {eventNotification}
-                                </p>
-                                :
-                                <div style={messageContainer}>
-                                    <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
-                                        {text}
-                                    </div>
-                                    <p style={username === you
-                                        ? yourName
-                                        : othersNames}
-                                    >
-                                        {username === you ? 'You' : username }
-                                    </p>
-                                </div>
-                            }
+
+              {userLeftRoom
+
+                  ? <div>Här ska typ livingroom komma in igen eller nå</div>
+
+                  : <div>
+                          <div style={topChatStyle}>
+                      <button
+                          style={{ ...buttonStyle, ...leaveButtonStyle }}
+                          onClick={() => leaveRoom()}
+                      >
+                          Leave room
+                      </button>
+                      <h2 style={roomNameStyle}>
+                          {activeChatRoom}
+                      </h2>
+                    </div>
+                    <div style={chatContainer} id='scrollContainer'>
+                      {roomMessages.map(({ username, text, eventNotification }, index) => (
+                          <div key={index}>
+                              {eventNotification
+                                  ?
+                                  <p style={notificationMessageStyle}>
+                                      {eventNotification}
+                                  </p>
+                                  :
+                                  <div style={messageContainer}>
+                                      <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                          {text}
+                                      </div>
+                                      <p style={username === you
+                                          ? yourName
+                                          : othersNames}
+                                      >
+                                          {username === you ? 'You' : username }
+                                      </p>
+                                  </div>
+                           </div>
+                         ))
+                       }
                         </div>
-                    ))
-                    }
-                </div>
-                <form
-                    onSubmit={(e) => handleMessage(e)}
-                    style={formContainer}
-                >
-                    <input
-                        placeholder='Message...'
-                        style={inputStyle}
-                        value={text}
-                        onChange={(event) => setText(event.target.value)}
-                    />
-                    <button
-                        type='submit'
-                        style={buttonStyle}
-                    >
-                        Send
-                    </button>
-                </form>
+                        <form
+                            onSubmit={(e) => handleMessage(e)}
+                            style={formContainer}
+                        >
+                            <input
+                                placeholder='Message...'
+                                style={inputStyle}
+                                value={text}
+                                onChange={(event) => setText(event.target.value)}
+                            />
+                            <button
+                                type='submit'
+                                style={buttonStyle}
+                            >
+                                Send
+                        </button>
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     );
