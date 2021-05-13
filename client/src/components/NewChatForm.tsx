@@ -8,17 +8,31 @@ interface Props {
 function NewChatForm(props: Props) {
     const [privateChat, setPrivateChat] = useState(false)
     const [roomName, setRoomName] = useState('');
-    const [password, setPassword] = useState('')
+    const [password, setPassword] = useState('');
+    const [takenName, setTakenName] = useState(false)
 
-    const { joinOpenRoom, joinLockedRoom, username } = useContext(SocketContext);
+    const { joinOpenRoom, joinLockedRoom, username, openRooms, lockedRooms } = useContext(SocketContext);
 
+    console.log(takenName)
     function createNewChat(e: React.FormEvent) {
         e.preventDefault();
-        if (password.length > 0) {
-            joinLockedRoom(roomName, password, username);
+        const openRoomExist = openRooms.find((room) => room.roomName === roomName) 
+        const lockedRoomExist = lockedRooms.find((room) => room.roomName === roomName) 
+
+        console.log(openRoomExist?.roomName)
+        console.log(lockedRoomExist?.roomName)
+
+        if (openRoomExist?.roomName || lockedRoomExist?.roomName === roomName) {
+            setTakenName(true)
         } else {
-            joinOpenRoom(roomName, username);
-        };
+            if (password.length > 0) {
+                joinLockedRoom(roomName, password, username);
+            } else {
+                joinOpenRoom(roomName, username);
+                props.closeForm()
+            };
+        }
+
     };
 
     return (
@@ -29,16 +43,21 @@ function NewChatForm(props: Props) {
                 </div>
                 <form
                     style={formStyle}
-                    onSubmit={(e) => { createNewChat(e); props.closeForm() }}
-                >
-                    <label htmlFor='chat-name'>
-                        Chat name
-                    </label>
+                    onSubmit={(e) => createNewChat(e)}
+                    >
+                        {takenName 
+                            ?   <p 
+                                style={{textAlign: 'center', color:'#E86666'}}
+                                >
+                                  Chat name already exist
+                                </p>
+                            :   <p>Chat name</p>
+                        }
                     <input
-                        id='chat-name'
                         type='text'
                         style={inputStyle}
                         onChange={(e) => setRoomName(e.target.value)}
+                        onClick={() => setTakenName(false)}
                         required
                     />
 
