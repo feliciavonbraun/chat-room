@@ -24,6 +24,7 @@ function Sidebar(props: Props) {
     const [inputPassword, setInputPassword] = useState('');
     const [clickedRoom, setClickedRoom] = useState('');
     const [windowSize, setWindowSize] = useState(window.innerWidth);
+    const [showErrorMessage, setShowErrorMessage] = useState(false)
 
     // Ej klar
     useEffect(() => {
@@ -43,6 +44,9 @@ function Sidebar(props: Props) {
     useEffect(() => {
         if (isCorrectPassword) {
             setShowPasswordInput(false)
+            setShowErrorMessage(false)
+        } else {
+            setShowErrorMessage(true)
         }
     }, [isCorrectPassword])
     
@@ -105,15 +109,23 @@ function Sidebar(props: Props) {
                 ))}
                 {showPasswordInput && (
                     <div style={passwordInputContainer}>
-                        <label>{`Chat Room: ${clickedRoom}`}</label>
+                        {!showErrorMessage
+                            ? 
+                            <p>{`Chat Room: ${clickedRoom}`}</p>
+                            :
+                            <p style={{textAlign: 'center', color:'#E86666'}}>
+                                Wrong password
+                            </p>
+                        }
                         <input
                             type='password'
                             style={inputStyle}
                             value={inputPassword}
                             placeholder='Enter password'
                             onChange={(e) => setInputPassword(e.target.value)}
+                            onClick={() => setShowErrorMessage(false)}
                         />
-                        {!isCorrectPassword && <span>Fel lösenord, försök igen</span>}
+                        
                         <button
                             style={{ ...buttonStyle, ...passwordButtonStyle }}
                             onClick={handleJoinLockedRoom}
