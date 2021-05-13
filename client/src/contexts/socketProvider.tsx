@@ -11,9 +11,11 @@ interface LockedRoom {
     password: string,
 };
 
-export interface Message extends OpenRoom {
-    username: string,
-    text: string,
+interface Message {
+    roomName: string,
+    username?: string,
+    text?: string,
+    eventNotification?: string
 };
 
 interface SocketValue {
@@ -23,13 +25,11 @@ interface SocketValue {
     activeChatRoom: string,
     username: string,
     isCorrectPassword?: boolean,
-    eventNotification: string,
     saveUsername: (username: string) => void,
     joinOpenRoom: (roomName: string, username: string) => void;
     joinLockedRoom: (roomName: string, password: string, username: string) => void;
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
-    leaveApp: () => void;
 };
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
 
@@ -44,33 +44,55 @@ const SocketProvider: FunctionComponent = ({ children }) => {
     const [lockedRooms, setLockedRooms] = useState<LockedRoom[]>([])
     const [activeChatRoom, setActiveChatRoom] = useState('');
     const [isCorrectPassword, setIsCorrectPassword] = useState<boolean>(true);
-    const [eventNotification, setEventNotification] = useState('');
 
     function saveUsername(username: string) {
         setUsername(username);
-        socket.emit('user-connected', username);
     };
 
     function joinOpenRoom(roomName: string, username: string) {
         socket.emit('join-open-room', roomName, username);
         setActiveChatRoom(roomName)
+
+        const eventNotification = `${username} has joined room`;
+        sendEventMessage(roomName, eventNotification)
     };
 
     function joinLockedRoom(roomName: string, password: string, username: string) {
         socket.emit('join-locked-room', roomName, password, username);
+        setActiveChatRoom(roomName)
+
+        const eventNotification = `${username} has joined room`;
+        sendEventMessage(roomName, eventNotification)
     }; 
+
+    function sendEventMessage(roomName: string, eventNotification: string) {
+        const message: Message = {
+            roomName,
+            eventNotification
+        };
+        socket.emit('event-notification', message, roomName)
+    }
         
     function sendMessage(username: string, text: string, roomName: string, ) {
         const message: Message = {
-            roomName, username, text 
+            roomName, 
+            username, 
+            text 
         };
         socket.emit('chat-message', message);
-        setAllMessages([...allMessages, message]); // viktig ibland
+        setAllMessages([...allMessages, message]);
+    };
+
+    function leaveRoom() {
+        socket.emit('leave-room', activeChatRoom, username);
+
+        const eventNotification = `${username} has left room`;
+        sendEventMessage(activeChatRoom, eventNotification);
     };
 
     useEffect(() => {
         // lägg till ON lyssnare här:        
-        socket.on('chat-message', function(message: Message) {
+        socket.on('send-message', (message: Message) => {
             setAllMessages((prevMessages) => [...prevMessages, message])
         });
 
@@ -82,8 +104,8 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             setLockedRooms(createdRooms);
         });
 
-        socket.on('event-notification', eventNotification => {
-            setEventNotification(eventNotification)
+        socket.on('send-event-notification', function(message: Message) {
+            setAllMessages((prevMessages) => [...prevMessages, message])
         });
 
         socket.on('join-locked-room-response', ({ roomName, success }) => {
@@ -98,14 +120,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.on('disconnect', () => {});
     }, []);
 
-    function leaveRoom() {
-        socket.emit('leave-room', activeChatRoom, username)
-    }
-
-    function leaveApp() {
-        socket.disconnect();
-    }
-
     return (
         <SocketContext.Provider value={{
             openRooms,
@@ -113,7 +127,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             activeChatRoom,
             username,
             isCorrectPassword,
-            eventNotification,
             
             saveUsername,
             joinOpenRoom,
@@ -123,7 +136,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             allMessages,
 
             leaveRoom,
-            leaveApp,
         }}>
             { children}
         </SocketContext.Provider>

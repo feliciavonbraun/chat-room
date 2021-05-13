@@ -2,17 +2,17 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { 
-        sendMessage, 
-        allMessages, 
-        leaveRoom, 
-        username, 
-        activeChatRoom, 
-        eventNotification 
+    const {
+        sendMessage,
+        allMessages,
+        leaveRoom,
+        username,
+        activeChatRoom,
     } = useContext(SocketContext);
 
     const [text, setText] = useState('');
-    const you = username; // detta är det satta usernamet
+    const you = username;
+    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
@@ -21,13 +21,12 @@ function ChatContainer() {
         ScrollToNewMessage();
     };
 
-    // TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
+    //TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
     function ScrollToNewMessage() {
         const scrollContainer = document.getElementById('scrollContainer');
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
-    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
 
     return (
         <div style={{ width: '100%', padding: '0 1rem', }}>
@@ -44,19 +43,27 @@ function ChatContainer() {
                     </h2>
                 </div>
                 <div style={chatContainer} id='scrollContainer'>
-                    {roomMessages.map(({ username, text }, index) => (
-                        <div key={index} style={messageContainer} >
-                            <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
-                                {text}
-                            </div>
-                                {username === you ?
-                                    <p style={yourName}>You</p>
-                                    :
-                                    <p style={othersNames}>{username}</p>
-                                }
-                                <p>{eventNotification}</p> 
-                        </div> 
-                        // skapa en funktion som gör att eventNotification tömms 
+                    {roomMessages.map(({ username, text, eventNotification }, index) => (
+                        <div key={index}>
+                            {eventNotification
+                                ?
+                                <p style={notificationMessageStyle}>
+                                    {eventNotification}
+                                </p>
+                                :
+                                <div style={messageContainer}>
+                                    <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                        {text}
+                                    </div>
+                                    <p style={username === you
+                                        ? yourName
+                                        : othersNames}
+                                    >
+                                        {username === you ? 'You' : username }
+                                    </p>
+                                </div>
+                            }
+                        </div>
                     ))
                     }
                 </div>
@@ -113,6 +120,12 @@ const messageContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
 };
+
+const notificationMessageStyle: CSSProperties = {
+    textAlign: 'center',
+    color: '#5C5C5C',
+    fontSize: '.8rem',
+}
 
 const messageStyle: CSSProperties = {
     fontSize: '0.8rem',

@@ -22,15 +22,10 @@ io.on('connection', (socket) => {
 
     socket.emit('all-open-rooms', openRooms);
     socket.emit('all-locked-rooms', lockedRooms);
-
-    socket.on('user-connected', username => {
-        console.log(`Sign in: ${username}.`)
-    }); 
     
-    /* SEND AND RECEIVE MESSEGES */
+    /* SEND MESSAGES */
     socket.on('chat-message', (data) => {
-        socket.in(data.roomName).emit('chat-message', data)
-        console.log( data.roomName + data)
+        socket.in(data.roomName).emit('send-message', data)
     }); 
     
     /* JOIN OPEN ROOM */
@@ -45,8 +40,7 @@ io.on('connection', (socket) => {
         };
 
         socket.join(roomName);
-        io.emit('all-open-rooms', openRooms);
-        socket.broadcast.emit('event-notification', (`${username} has joined ${roomName}`)); 
+        io.emit('all-open-rooms', openRooms); 
         console.log(`User has joined open room ${roomName}`);
     });
 
@@ -69,8 +63,7 @@ io.on('connection', (socket) => {
 
         socket.join(roomName);
         io.emit('all-locked-rooms', lockedRooms);
-        socket.emit('join-locked-room-response', { roomName, success: true });
-        socket.broadcast.emit('event-notification', (`${username} has joined ${roomName}`)); 
+        socket.emit('join-locked-room-response', { roomName, success: true })
         console.log(`User has joined locked room ${roomName}`);
     });
 
@@ -80,6 +73,11 @@ io.on('connection', (socket) => {
         const correctPassword = lockedRooms[roomIndex]?.password
         return correctPassword && correctPassword === password;
     };
+
+    /* SEND EVENT NOTIFICATION */
+    socket.on('event-notification', (data, roomName) => {
+        socket.broadcast.to(roomName).emit('send-event-notification', data)
+    });
 
     /* LEAVE ROOM */
     socket.on('leave-room', (roomName, username) => {
