@@ -12,7 +12,6 @@ const io = new Server(server, {
 });
 
 
-
 // ------------
 
 const openRooms = []
@@ -23,18 +22,14 @@ io.on('connection', (socket) => {
     socket.emit('all-open-rooms', openRooms);
     socket.emit('all-locked-rooms', lockedRooms);
 
-    socket.on('user-connected', username => {
-        console.log(`Sign in: ${username}.`)
-    });
-
-    /* MESSAGE */
+    
+    /* SEND AND RECIEVE MESSAGES */
     socket.on('chat-message', (data) => {
-        socket.in(data.roomName).emit('chat-message', data)
-        console.log(data.roomName + data)
-    });
-
+        socket.in(data.roomName).emit('send-message', data)
+    }); 
+    
     /* JOIN OPEN ROOM */
-    socket.on('join-open-room', (roomName) => {
+    socket.on('join-open-room', (roomName, username) => {
         const existingRoom = openRooms.some(oneRoom => oneRoom.roomName === roomName);
         if (!existingRoom) {
             openRooms.push(
@@ -45,9 +40,8 @@ io.on('connection', (socket) => {
         };
 
         socket.join(roomName);
-        io.emit('all-open-rooms', openRooms);
-        console.log(`User has joined room ${roomName}`);
-        // fundera på om socket.leaveAll() behövs!
+        io.emit('all-open-rooms', openRooms); 
+        console.log(`User has joined open room ${roomName}`);
     });
 
     /* JOIN LOCKED ROOM */
@@ -70,7 +64,7 @@ io.on('connection', (socket) => {
         socket.join(roomName);
         io.emit('all-locked-rooms', lockedRooms);
         socket.emit('join-locked-room-response', { roomName, success: true })
-        console.log(`User has joined room ${roomName}`);
+        console.log(`User has joined locked room ${roomName}`);
     });
 
     /* CHECK PASSWORD */
@@ -80,15 +74,21 @@ io.on('connection', (socket) => {
         return correctPassword && correctPassword === password;
     };
 
+    /* SEND EVENT NOTIFICATION */
+    socket.on('event-notification', (data, roomName) => {
+        socket.broadcast.to(roomName).emit('send-event-notification', data)
+    });
+
     /* LEAVE ROOM */
     socket.on('leave-room', (roomName, username) => {
+        socket.leave(roomName, socket.id);
+        socket.broadcast.emit('event-notification', (`${username} has left ${roomName}`));
         console.log(`${username} has left ${roomName}`);
         socket.leave(roomName, socket.id);
         updateRoomsLists();
-
     });
-
 });
+
 // ------------
 
 
@@ -105,14 +105,9 @@ function updateRoomsLists() {
         } 
     }
 
-
     io.emit('all-open-rooms', openRooms);
     io.emit('all-locked-rooms', lockedRooms);
 }
-
-// function getAllRooms() {
-//     return openRooms;
-// }
 
 
 server.listen(PORT, () => {

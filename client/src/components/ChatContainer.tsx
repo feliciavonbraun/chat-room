@@ -2,10 +2,18 @@ import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
 function ChatContainer() {
-    const { sendMessage, allMessages, leaveRoom, username, activeChatRoom } = useContext(SocketContext);
+    const {
+        sendMessage,
+        allMessages,
+        leaveRoom,
+        username,
+        activeChatRoom,
+    } = useContext(SocketContext);
+
     const [text, setText] = useState('');
-    const [userLeftRoom, setUserLeftRoom] = useState(false);
-    const you = username; // detta är det satta usernamet
+    const you = username;
+    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
+
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
@@ -14,54 +22,55 @@ function ChatContainer() {
         ScrollToNewMessage();
     };
 
-    // TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
+    //TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
     function ScrollToNewMessage() {
         const scrollContainer = document.getElementById('scrollContainer');
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
-    function handleLeaveRoom() {
-        setUserLeftRoom(true);
-
-    }
-
-    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
-
     return (
         <div style={{ width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
-                {userLeftRoom
 
-                    ? <div>Här ska typ livingroom komma in igen eller nå</div>
+              {userLeftRoom
 
-                    : <div>
-                        <div style={topChatStyle}>
-                            {activeChatRoom !== 'Living room' && (
-                                <button
-                                    style={{ ...buttonStyle, ...leaveButtonStyle }}
-                                    onClick={() => { leaveRoom(); handleLeaveRoom() }}
-                                >
-                                    Leave room
-                                </button>
-                            )}
-                            <h2 style={roomNameStyle}>
-                                {activeChatRoom}
-                            </h2>
-                        </div>
-                        <div style={chatContainer} id='scrollContainer'>
-                            {roomMessages.map(({ username, text }, index) => (
-                                <div key={index} style={messageContainer} >
-                                    <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
-                                        {text}
-                                    </div>
-                                    {username === you ?
-                                        <p style={yourName}>You</p>
-                                        :
-                                        <p style={othersNames}>{username}</p>
-                                    }
-                                </div>
-                            ))
-                            }
+                  ? <div>Här ska typ livingroom komma in igen eller nå</div>
+
+                  : <div>
+                          <div style={topChatStyle}>
+                      <button
+                          style={{ ...buttonStyle, ...leaveButtonStyle }}
+                          onClick={() => leaveRoom()}
+                      >
+                          Leave room
+                      </button>
+                      <h2 style={roomNameStyle}>
+                          {activeChatRoom}
+                      </h2>
+                    </div>
+                    <div style={chatContainer} id='scrollContainer'>
+                      {roomMessages.map(({ username, text, eventNotification }, index) => (
+                          <div key={index}>
+                              {eventNotification
+                                  ?
+                                  <p style={notificationMessageStyle}>
+                                      {eventNotification}
+                                  </p>
+                                  :
+                                  <div style={messageContainer}>
+                                      <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                          {text}
+                                      </div>
+                                      <p style={username === you
+                                          ? yourName
+                                          : othersNames}
+                                      >
+                                          {username === you ? 'You' : username }
+                                      </p>
+                                  </div>
+                           </div>
+                         ))
+                       }
                         </div>
                         <form
                             onSubmit={(e) => handleMessage(e)}
@@ -118,6 +127,12 @@ const messageContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
 };
+
+const notificationMessageStyle: CSSProperties = {
+    textAlign: 'center',
+    color: '#5C5C5C',
+    fontSize: '.8rem',
+}
 
 const messageStyle: CSSProperties = {
     fontSize: '0.8rem',

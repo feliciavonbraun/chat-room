@@ -9,9 +9,11 @@ interface LockedRoom {
     password: string,
 };
 
-export interface Message extends OpenRoom {
-    username: string,
-    text: string,
+interface Message {
+    roomName: string,
+    username?: string,
+    text?: string,
+    eventNotification?: string
 };
 
 interface SocketValue {
@@ -22,8 +24,8 @@ interface SocketValue {
     username: string,
     isCorrectPassword?: boolean,
     saveUsername: (username: string) => void,
-    joinOpenRoom: (roomName: string) => void;
-    joinLockedRoom: (roomName: string, password: string) => void;
+    joinOpenRoom: (roomName: string, username: string) => void;
+    joinLockedRoom: (roomName: string, password: string, username: string) => void;
     sendMessage: (username: string, text: string, roomName: string) => void;
     leaveRoom: () => void;
 };
@@ -44,31 +46,54 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
     function saveUsername(username: string) {
         setUsername(username);
-        socket.emit('user-connected', username);
     };
 
-    function joinOpenRoom(roomName: string) {
-        socket.emit('join-open-room', roomName);
+    function joinOpenRoom(roomName: string, username: string) {
+        socket.emit('join-open-room', roomName, username);
         setActiveChatRoom(roomName)
+
+        const eventNotification = `${username} has joined room`;
+        sendEventMessage(roomName, eventNotification)
     };
 
-    function joinLockedRoom(roomName: string, password: string) {
-        socket.emit('join-locked-room', roomName, password);
+    function joinLockedRoom(roomName: string, password: string, username: string) {
+        socket.emit('join-locked-room', roomName, password, username);
+        setActiveChatRoom(roomName)
+
+        const eventNotification = `${username} has joined room`;
+        sendEventMessage(roomName, eventNotification)
     }; 
 
+
+    function sendEventMessage(roomName: string, eventNotification: string) {
+        const message: Message = {
+            roomName,
+            eventNotification
+        };
+        socket.emit('event-notification', message, roomName)
+    }
         
     function sendMessage(username: string, text: string, roomName: string, ) {
         const message: Message = {
-            roomName, username, text 
+            roomName, 
+            username, 
+            text 
         };
         socket.emit('chat-message', message);
-        setAllMessages([...allMessages, message]); 
+        setAllMessages([...allMessages, message]);
+    };
+
+    function leaveRoom() {
+        socket.emit('leave-room', activeChatRoom, username);
+
+        const eventNotification = `${username} has left room`;
+        sendEventMessage(activeChatRoom, eventNotification);
 
     };
 
     useEffect(() => {
         // lägg till ON lyssnare här:        
-        socket.on('chat-message', function(message: Message) {
+        socket.on('send-message', (message: Message) => {
             setAllMessages((prevMessages) => [...prevMessages, message])
         });
 
@@ -80,6 +105,10 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             setLockedRooms(createdRooms);
         });
 
+        socket.on('send-event-notification', function(message: Message) {
+            setAllMessages((prevMessages) => [...prevMessages, message])
+        });
+
         socket.on('join-locked-room-response', ({ roomName, success }) => {
             if (success) {
                 setActiveChatRoom(roomName);
@@ -89,10 +118,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             }
         });
     }, []);
-
-    function leaveRoom() {
-        socket.emit('leave-room', activeChatRoom, username);
-    }
 
     return (
         <SocketContext.Provider value={{

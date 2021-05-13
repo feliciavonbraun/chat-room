@@ -36,7 +36,7 @@ function Sidebar(props: Props) {
     };
 
     function handleJoinLockedRoom() {
-        joinLockedRoom(clickedRoom, inputPassword);   
+        joinLockedRoom(clickedRoom, inputPassword, username);   
         setInputPassword('')
     };
 
@@ -80,7 +80,7 @@ function Sidebar(props: Props) {
                             ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => joinOpenRoom(room.roomName)}
+                        onClick={() => joinOpenRoom(room.roomName, username)}
                     >
                         {room.roomName}
                     </button>

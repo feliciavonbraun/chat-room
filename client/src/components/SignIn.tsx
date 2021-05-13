@@ -14,7 +14,7 @@ function SignIn(props: Props) {
         e.preventDefault()
         setUsername(username)
         saveUsername(username)
-        joinOpenRoom('Living room')
+        joinOpenRoom('Living room', username)
         props.signIn()
     }
 
