@@ -1,7 +1,12 @@
 import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 
-function ChatContainer() {
+interface Props {
+    leaveChat: boolean;
+    setLeaveChat: () => void;
+}
+
+function ChatContainer(props: Props) {
     const {
         sendMessage,
         allMessages,
@@ -28,49 +33,51 @@ function ChatContainer() {
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
+
     return (
         <div style={{ width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
-
-              {userLeftRoom
-
-                  ? <div>Här ska typ livingroom komma in igen eller nå</div>
-
-                  : <div>
-                          <div style={topChatStyle}>
-                      <button
-                          style={{ ...buttonStyle, ...leaveButtonStyle }}
-                          onClick={() => leaveRoom()}
-                      >
-                          Leave room
-                      </button>
-                      <h2 style={roomNameStyle}>
-                          {activeChatRoom}
-                      </h2>
-                    </div>
-                    <div style={chatContainer} id='scrollContainer'>
-                      {roomMessages.map(({ username, text, eventNotification }, index) => (
-                          <div key={index}>
-                              {eventNotification
-                                  ?
-                                  <p style={notificationMessageStyle}>
-                                      {eventNotification}
-                                  </p>
-                                  :
-                                  <div style={messageContainer}>
-                                      <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
-                                          {text}
-                                      </div>
-                                      <p style={username === you
-                                          ? yourName
-                                          : othersNames}
-                                      >
-                                          {username === you ? 'You' : username }
-                                      </p>
-                                  </div>
-                           </div>
-                         ))
-                       }
+                {props.leaveChat
+                    ?
+                    <div>Här ska typ livingroom komma in igen eller nå</div>
+                    :
+                    <div>
+                        <div style={topChatStyle}>
+                            {activeChatRoom !== 'Living room' && (
+                                <button
+                                    style={{ ...buttonStyle, ...leaveButtonStyle }}
+                                    onClick={() =>  {leaveRoom(); props.setLeaveChat()}}
+                                >
+                                    Leave room
+                                </button>
+                            )}
+                            <h2 style={roomNameStyle}>
+                                {activeChatRoom}
+                            </h2>
+                        </div>
+                        <div style={chatContainer} id='scrollContainer'>
+                            {roomMessages.map(({ username, text, eventNotification }, index) => (
+                                <div key={index}>
+                                    {eventNotification
+                                        ?
+                                        <p style={notificationMessageStyle}>
+                                            {eventNotification}
+                                        </p>
+                                        :
+                                        <div style={messageContainer}>
+                                            <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                                {text}
+                                            </div>
+                                            <p style={username === you
+                                                ? yourName
+                                                : othersNames}
+                                            >
+                                                {username === you ? 'You' : username}
+                                            </p>
+                                        </div>
+                                    }
+                                </div>
+                            ))}
                         </div>
                         <form
                             onSubmit={(e) => handleMessage(e)}
