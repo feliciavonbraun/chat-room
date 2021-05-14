@@ -1,19 +1,26 @@
 import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 import { useMediaQuery } from "./useMediaQuery";
+import Lottie from 'react-lottie';
+import animationData from '../assets/waiting.json';
 
-function ChatContainer() {
-    const { 
-        sendMessage, 
-        allMessages, 
-        leaveRoom, 
-        username, 
-        activeChatRoom, 
-        eventNotification 
+interface Props {
+    leaveChat: boolean;
+    setLeaveChat: () => void;
+}
+
+function ChatContainer(props: Props) {
+    const {
+        sendMessage,
+        allMessages,
+        leaveRoom,
+        username,
+        activeChatRoom,
     } = useContext(SocketContext);
 
     const [text, setText] = useState('');
-    const you = username; // detta är det satta usernamet
+    const you = username;
+    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
     let mobileView = useMediaQuery('(max-width: 780px)');
 
     function handleMessage(e: React.FormEvent) {
@@ -23,62 +30,101 @@ function ChatContainer() {
         ScrollToNewMessage();
     };
 
-    // TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
+    //TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
     function ScrollToNewMessage() {
         const scrollContainer = document.getElementById('scrollContainer');
         scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
     };
 
-    const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animationData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    }
+
+
 
     return (
         <div style={ mobileView ? {width: '100%', padding: '0 1rem 0 3rem'} : { width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
-                <div style={topChatStyle}>
-                    <button
-                        style={{ ...buttonStyle, ...leaveButtonStyle }}
-                        onClick={() => leaveRoom()}
-                    >
-                        Leave room
-                    </button>
-                    <h2 style={roomNameStyle}>
-                        {activeChatRoom}
-                    </h2>
-                </div>
-                <div style={chatContainer} id='scrollContainer'>
-                    {roomMessages.map(({ username, text }, index) => (
-                        <div key={index} style={messageContainer} >
-                            <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
-                                {text}
-                            </div>
-                                {username === you ?
-                                    <p style={yourName}>You</p>
-                                    :
-                                    <p style={othersNames}>{username}</p>
-                                }
-                                <p>{eventNotification}</p> 
-                        </div> 
-                        // skapa en funktion som gör att eventNotification tömms 
-                    ))
-                    }
-                </div>
-                <form
-                    onSubmit={(e) => handleMessage(e)}
-                    style={formContainer}
-                >
-                    <input
-                        placeholder='Message...'
-                        style={inputStyle}
-                        value={text}
-                        onChange={(event) => setText(event.target.value)}
-                    />
-                    <button
-                        type='submit'
-                        style={buttonStyle}
-                    >
-                        Send
-                    </button>
-                </form>
+                {props.leaveChat
+                    ?
+                    <div style={middlePage}>
+                        <p>
+                            Hey {username}!<br></br>
+                            You are currently not in a room,<br></br>
+                             choose one to keep chatting!<br></br>
+                            /Fred
+                        </p>
+                        <div style={lottieBox}>
+                            <Lottie
+                                options={defaultOptions}
+                                height={200}
+                                width={200}
+                            />
+                        </div>
+                    </div>
+                    :
+                    <div>
+                        <div style={topChatStyle}>
+                            {activeChatRoom !== 'Living room' && (
+                                <button
+                                    style={{ ...buttonStyle, ...leaveButtonStyle }}
+                                    onClick={() =>  {leaveRoom(); props.setLeaveChat()}}
+                                >
+                                    Leave room
+                                </button>
+                            )}
+                            <h2 style={roomNameStyle}>
+                                {activeChatRoom}
+                            </h2>
+                        </div>
+                        <div style={chatContainer} id='scrollContainer'>
+                            {roomMessages.map(({ username, text, eventNotification }, index) => (
+                                <div key={index}>
+                                    {eventNotification
+                                        ?
+                                        <p style={notificationMessageStyle}>
+                                            {eventNotification}
+                                        </p>
+                                        :
+                                        <div style={messageContainer}>
+                                            <div style={username === you ? { ...messageStyle, ...yourMessages } : { ...messageStyle, ...othersMessages }} >
+                                                {text}
+                                            </div>
+                                            <p style={username === you
+                                                ? yourName
+                                                : othersNames}
+                                            >
+                                                {username === you ? 'You' : username}
+                                            </p>
+                                        </div>
+                                    }
+                                </div>
+                            ))}
+                        </div>
+                        <form
+                            onSubmit={(e) => handleMessage(e)}
+                            style={formContainer}
+                        >
+                            <input
+                                placeholder='Message...'
+                                style={inputStyle}
+                                value={text}
+                                onChange={(event) => setText(event.target.value)}
+                            />
+                            <button
+                                type='submit'
+                                style={buttonStyle}
+                            >
+                                Send
+                        </button>
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     );
@@ -96,6 +142,22 @@ const topChatStyle: CSSProperties = {
     alignItems: 'center',
     margin: '2.5rem 0 1.5rem',
 };
+
+const middlePage: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '10rem',
+    alignContent: 'center',
+    textAlign: 'center',
+    lineHeight: '1.3rem',
+    color: '#5C5C5C'
+
+}
+
+const lottieBox: CSSProperties = {
+    display: 'flex',
+    justifyContent: 'center',
+}
 
 const roomNameStyle: CSSProperties = {
     textAlign: 'center',
@@ -115,6 +177,12 @@ const messageContainer: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
 };
+
+const notificationMessageStyle: CSSProperties = {
+    textAlign: 'center',
+    color: '#5C5C5C',
+    fontSize: '.8rem',
+}
 
 const messageStyle: CSSProperties = {
     fontSize: '0.8rem',

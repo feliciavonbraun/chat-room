@@ -9,7 +9,9 @@ import './MobileSidebar.css';
 
 interface Props {
     signOut: () => void;
-    openForm: () => void
+    openForm: (value: boolean) => void
+    joinChat: (value: boolean) => void;
+    clickedFormButton: boolean;
 };
 
 function Sidebar(props: Props) {
@@ -18,7 +20,7 @@ function Sidebar(props: Props) {
         openRooms,
         lockedRooms,
         activeChatRoom,
-        leaveApp,
+        leaveRoom,
         isCorrectPassword,
         joinOpenRoom,
         joinLockedRoom,
@@ -28,16 +30,17 @@ function Sidebar(props: Props) {
     const [inputPassword, setInputPassword] = useState('');
     const [clickedRoom, setClickedRoom] = useState('');
     const [isOpenSidebar, setIsOpenSidebar] = useState(false);
-
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
     let mobileView = useMediaQuery('(max-width: 780px)');
-
-    useEffect(() => {
+  
+   useEffect(() => {
         if (isCorrectPassword) {
             setShowPasswordInput(false);
-        }
-
-    }, [isCorrectPassword]);
-
+            setShowErrorMessage(false);
+        } else {
+            setShowErrorMessage(true);
+    }, [isCorrectPassword]); 
+          
     function openPasswordInput(roomName: string) {
         setClickedRoom(roomName);
         setShowPasswordInput(true);
@@ -79,6 +82,7 @@ function Sidebar(props: Props) {
                     }
                 </div>
             }
+
             <div style={welcomeContainer}>
                 <img
                     src={chatLogo}
@@ -88,15 +92,18 @@ function Sidebar(props: Props) {
                 <h3 style={usernameStyle}>{username}</h3>
                 <button
                     style={{ ...buttonStyle, ...noBorderButtonStyle }}
-                    onClick={() => { leaveApp(); props.signOut() }}
+                    onClick={() => { leaveRoom(); props.signOut() }}
                 >
                     Sign out
                 </button>
             </div>
             <div style={roomButtonsContainer}>
                 <button
-                    onClick={props.openForm}
-                    style={{ ...buttonStyle, ...newChatButtonStyle }}
+                    onClick={() => {props.openForm(true); setShowPasswordInput(false)}}
+                    style={props.clickedFormButton 
+                            ?   { ...buttonStyle, ...newChatButtonStyle, ...activeButtonStyle }
+                            :   { ...buttonStyle, ...newChatButtonStyle }
+                        }
                 >
                     New Chat
                 </button>
@@ -106,11 +113,17 @@ function Sidebar(props: Props) {
                 {openRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={room.roomName === activeChatRoom
-                            ? { ...buttonStyle, ...activeButtonStyle }
+                        style={room.roomName === activeChatRoom && !props.clickedFormButton
+                            ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => joinOpenRoom(room.roomName, username)}
+                        onClick={() => {
+                            joinOpenRoom(room.roomName, username); 
+                            props.joinChat(false);
+                            setShowPasswordInput(false);
+                            props.openForm(false);
+                        }}
+                        disabled={room.roomName === activeChatRoom}
                     >
                         {room.roomName}
                     </button>
@@ -123,11 +136,16 @@ function Sidebar(props: Props) {
                 {lockedRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={room.roomName === activeChatRoom
-                            ? { ...buttonStyle, ...activeButtonStyle }
+                        style={room.roomName === activeChatRoom && !props.clickedFormButton
+                            ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => openPasswordInput(room.roomName)}
+                        onClick={() => {
+                            openPasswordInput(room.roomName); 
+                            props.joinChat(false);
+                            props.openForm(false);
+                        }}
+                        disabled={room.roomName === activeChatRoom}
                         id={room.roomName}
                     >
                         {room.roomName}
@@ -135,15 +153,23 @@ function Sidebar(props: Props) {
                 ))}
                 {showPasswordInput && (
                     <div style={passwordInputContainer}>
-                        <label>{`Chat Room: ${clickedRoom}`}</label>
+                        {!showErrorMessage
+                            ? 
+                            <p>{`Chat Room: ${clickedRoom}`}</p>
+                            :
+                            <p style={{textAlign: 'center', color:'#E86666'}}>
+                                Wrong password
+                            </p>
+                        }
                         <input
                             type='password'
                             style={inputStyle}
                             value={inputPassword}
                             placeholder='Enter password'
                             onChange={(e) => setInputPassword(e.target.value)}
+                            onClick={() => setShowErrorMessage(false)}
                         />
-                        {!isCorrectPassword && <span>Fel lösenord, försök igen</span>}
+                        
                         <button
                             style={{ ...buttonStyle, ...passwordButtonStyle }}
                             onClick={handleJoinLockedRoom}
@@ -238,6 +264,7 @@ const buttonStyle: CSSProperties = {
     border: 'none',
     outline: 'none',
     cursor: 'pointer',
+    color: '#5C5C5C'
 };
 
 const noBorderButtonStyle: CSSProperties = {
