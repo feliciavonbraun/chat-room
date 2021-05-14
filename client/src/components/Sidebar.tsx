@@ -3,8 +3,8 @@ import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 import chatLogo from "../assets/chatLogo.svg";
 import { useMediaQuery } from "./useMediaQuery";
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+// import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+// import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import './MobileSidebar.css';
 
 interface Props {
@@ -39,6 +39,7 @@ function Sidebar(props: Props) {
             setShowErrorMessage(false);
         } else {
             setShowErrorMessage(true);
+        }
     }, [isCorrectPassword]); 
           
     function openPasswordInput(roomName: string) {
@@ -76,10 +77,10 @@ function Sidebar(props: Props) {
                     style={stripeStyle}
                     onClick={() => setIsOpenSidebar(!isOpenSidebar)}
                 >
-                    {!isOpenSidebar 
+                    {/* {!isOpenSidebar 
                         ? <ArrowForwardIosIcon/>
                         : <ArrowBackIosIcon/>
-                    }
+                    } */}
                 </div>
             }
 
@@ -99,7 +100,11 @@ function Sidebar(props: Props) {
             </div>
             <div style={roomButtonsContainer}>
                 <button
-                    onClick={() => {props.openForm(true); setShowPasswordInput(false)}}
+                    onClick={() => {
+                        props.openForm(true); 
+                        setShowPasswordInput(false);
+                        setIsOpenSidebar(false);
+                    }}
                     style={props.clickedFormButton 
                             ?   { ...buttonStyle, ...newChatButtonStyle, ...activeButtonStyle }
                             :   { ...buttonStyle, ...newChatButtonStyle }
@@ -122,6 +127,7 @@ function Sidebar(props: Props) {
                             props.joinChat(false);
                             setShowPasswordInput(false);
                             props.openForm(false);
+                            setIsOpenSidebar(false)
                         }}
                         disabled={room.roomName === activeChatRoom}
                     >
@@ -172,7 +178,7 @@ function Sidebar(props: Props) {
                         
                         <button
                             style={{ ...buttonStyle, ...passwordButtonStyle }}
-                            onClick={handleJoinLockedRoom}
+                            onClick={() => {handleJoinLockedRoom(); setIsOpenSidebar(false)}}
                         >
                             Join
                         </button>
