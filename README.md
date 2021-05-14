@@ -11,19 +11,14 @@ with a password! Share it carefully with people you trust.
 <br>
 <br>
 <br>
-<br>
-This app was created by: <br>
-[Felicia](https://github.com/feliciavonbraun)<br>
-[Jennifer](https://github.com/JenniferTendell)<br>
-&<br>
+This app was created by:
+[Felicia](https://github.com/feliciavonbraun)
+[Jennifer](https://github.com/JenniferTendell)
+&
 [Mikaela](https://github.com/MikaelaAnd)
-
-
-
 <br>
 <br>
 <br>
-
 ### For developers: 
 Run <i>'npm i'</i> in both client and server folder. Run <i>'npm i'</i> in the root folder and then <i>'npm start'</i>!
 For production: run <i>'npm run build'</i> in the client terminal. 
