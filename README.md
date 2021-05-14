@@ -25,7 +25,7 @@ This app was created by: <br>
 <br>
 
 ### For developers: 
-Run <i>'npm i'</i> in both client and server folder. And then <i>'npm start'</i>. 
+Run <i>'npm i'</i> in both client and server folder. Run <i>'npm i'</i> in the root folder and then <i>'npm start'</i>!
 For production: run <i>'npm run build'</i> in the client terminal. 
 
 
