@@ -83,9 +83,13 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         setAllMessages([...allMessages, message]);
     };
 
+
     function leaveRoom() {
         socket.emit('leave-room', activeChatRoom, username);
 
+        const copyAllMessages = [...allMessages]
+        const updatedAllMessages = copyAllMessages.filter((message) => message.roomName !== activeChatRoom)
+        setAllMessages(updatedAllMessages);
         const eventNotification = `${username} has left room`;
         sendEventMessage(activeChatRoom, eventNotification);
 
@@ -117,6 +121,8 @@ const SocketProvider: FunctionComponent = ({ children }) => {
                 setIsCorrectPassword(false);
             }
         });
+
+
     }, []);
 
     return (
