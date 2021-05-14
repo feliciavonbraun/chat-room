@@ -11,23 +11,21 @@ const io = new Server(server, {
     }
 });
 
-
 // ------------
 
-const openRooms = []
-const lockedRooms = []
+const openRooms = [];
+const lockedRooms = [];
 
 io.on('connection', (socket) => {
 
     socket.emit('all-open-rooms', openRooms);
     socket.emit('all-locked-rooms', lockedRooms);
 
-    
     /* SEND AND RECIEVE MESSAGES */
     socket.on('chat-message', (data) => {
         socket.in(data.roomName).emit('send-message', data)
-    }); 
-    
+    });
+
     /* JOIN OPEN ROOM */
     socket.on('join-open-room', (roomName, username) => {
         const existingRoom = openRooms.some(oneRoom => oneRoom.roomName === roomName);
@@ -40,8 +38,7 @@ io.on('connection', (socket) => {
         };
 
         socket.join(roomName);
-        io.emit('all-open-rooms', openRooms); 
-        console.log(`User has joined open room ${roomName}`);
+        io.emit('all-open-rooms', openRooms);
     });
 
     /* JOIN LOCKED ROOM */
@@ -57,14 +54,13 @@ io.on('connection', (socket) => {
         };
 
         if (!checkPassword(roomName, password)) {
-            socket.emit('join-locked-room-response', { roomName, success: false })
+            socket.emit('join-locked-room-response', { roomName, success: false });
             return;
         }
 
         socket.join(roomName);
         io.emit('all-locked-rooms', lockedRooms);
-        socket.emit('join-locked-room-response', { roomName, success: true })
-        console.log(`User has joined locked room ${roomName}`);
+        socket.emit('join-locked-room-response', { roomName, success: true });
     });
 
     /* CHECK PASSWORD */
@@ -83,7 +79,6 @@ io.on('connection', (socket) => {
     socket.on('leave-room', (roomName, username) => {
         socket.leave(roomName, socket.id);
         socket.broadcast.emit('event-notification', (`${username} has left ${roomName}`));
-        console.log(`${username} has left ${roomName}`);
         socket.leave(roomName, socket.id);
         updateRoomsLists();
     });
@@ -91,24 +86,22 @@ io.on('connection', (socket) => {
 
 // ------------
 
-
 function updateRoomsLists() {
     for (const room of openRooms) {
         if (!io.sockets.adapter.rooms.get(room.roomName)) {
             openRooms.splice(openRooms.indexOf(room), 1)
-        } 
+        }
     }
 
     for (const room of lockedRooms) {
         if (!io.sockets.adapter.rooms.get(room.roomName)) {
             lockedRooms.splice(lockedRooms.indexOf(room), 1)
-        } 
+        }
     }
 
     io.emit('all-open-rooms', openRooms);
     io.emit('all-locked-rooms', lockedRooms);
-}
-
+};
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)

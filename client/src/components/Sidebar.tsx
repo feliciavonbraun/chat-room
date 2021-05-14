@@ -203,7 +203,7 @@ const stripeStyle: CSSProperties = {
     justifyContent: 'center',
     right: 0,
     height: '100vh',
-    width: '2rem',
+    width: '1.5rem',
     cursor: 'pointer',
     backgroundImage: 'linear-gradient(#00A8F4, #00F39A)',
     color: 'white',
