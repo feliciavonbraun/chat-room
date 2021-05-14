@@ -220,6 +220,7 @@ const buttonStyle: CSSProperties = {
     border: 'none',
     outline: 'none',
     cursor: 'pointer',
+    color: '#5C5C5C'
 };
 
 const noBorderButtonStyle: CSSProperties = {
