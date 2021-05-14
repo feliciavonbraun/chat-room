@@ -5,7 +5,7 @@ import chatLogo from "../assets/chatLogo.svg";
 import { useMediaQuery } from "./useMediaQuery";
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import './MobileSidebar.css';
+import '../MobileSidebar.css';
 
 interface Props {
     signOut: () => void;
