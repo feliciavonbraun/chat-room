@@ -1,4 +1,4 @@
-import { CSSProperties, useContext, useState } from "react";
+import { CSSProperties, useContext, useEffect, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
 import { useMediaQuery } from "./useMediaQuery";
 import Lottie from 'react-lottie';
@@ -21,21 +21,22 @@ function ChatContainer(props: Props) {
     const [text, setText] = useState('');
     const you = username;
     const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
-    let mobileView = useMediaQuery('(max-width: 780px)');
+    let mobileView = useMediaQuery('(max-width: 780px)');    
+
+    useEffect(() => {
+        if(roomMessages.length > 1) {
+            const scrollContainer = document.getElementById('scrollContainer');
+            scrollContainer?.scrollTo(0, (scrollContainer.scrollHeight))
+        };
+    }, [roomMessages.length]);
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
-        sendMessage(username, text, activeChatRoom)
+        sendMessage(username, text, activeChatRoom);
         setText('');
-        ScrollToNewMessage();
     };
 
-    //TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
-    function ScrollToNewMessage() {
-        const scrollContainer = document.getElementById('scrollContainer');
-        scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
-    };
-
+    // Lottie animation
     const defaultOptions = {
         loop: true,
         autoplay: true,
@@ -43,9 +44,7 @@ function ChatContainer(props: Props) {
         rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
         }
-    }
-
-
+    };
 
     return (
         <div style={ mobileView ? {width: '100%', padding: '0 1rem 0 3rem'} : { width: '100%', padding: '0 1rem', }}>
@@ -151,13 +150,12 @@ const middlePage: CSSProperties = {
     textAlign: 'center',
     lineHeight: '1.3rem',
     color: '#5C5C5C'
-
-}
+};
 
 const lottieBox: CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
-}
+};
 
 const roomNameStyle: CSSProperties = {
     textAlign: 'center',
@@ -182,7 +180,7 @@ const notificationMessageStyle: CSSProperties = {
     textAlign: 'center',
     color: '#5C5C5C',
     fontSize: '.8rem',
-}
+};
 
 const messageStyle: CSSProperties = {
     fontSize: '0.8rem',
