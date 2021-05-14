@@ -1,7 +1,6 @@
 import Layout from "./layout";
 import SocketProvider from "../contexts/socketProvider";
 
-
 function App() {
   return (
     <SocketProvider>

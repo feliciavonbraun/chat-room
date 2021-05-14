@@ -3,38 +3,38 @@ import ChatContainer from "./ChatContainer";
 import NewChatForm from "./NewChatForm";
 import Sidebar from "./Sidebar";
 
-
 interface Props {
     signOut: () => void;
-}
-
+};
 
 function Main(props: Props) {
-    const [showForm, setShowForm] = useState(false)
-    const [leaveCurrentRoom, setLeaveCurrentRoom] = useState(false) //byt namn sen
+    const [showForm, setShowForm] = useState(false);
+    const [leaveCurrentRoom, setLeaveCurrentRoom] = useState(false);
 
     function toggleNewChatForm() {
         setShowForm(!showForm);
     };
-    
-    return(
+
+    return (
         <main style={rootStyle}>
-           <Sidebar 
-                openForm={(value) => setShowForm(value)} 
+            <Sidebar
+                openForm={(value) => setShowForm(value)}
                 signOut={props.signOut}
                 joinChat={(value) => setLeaveCurrentRoom(value)}
                 clickedFormButton={showForm}
             />
-           {showForm 
-            ?   <NewChatForm 
+            {showForm
+                ?
+                <NewChatForm
                     closeForm={toggleNewChatForm}
                     joinChat={() => setLeaveCurrentRoom(false)}
                 />
-            :   <ChatContainer 
+                :
+                <ChatContainer
                     leaveChat={leaveCurrentRoom}
                     setLeaveChat={() => setLeaveCurrentRoom(true)}
                 />
-           }
+            }
         </main>
     );
 };

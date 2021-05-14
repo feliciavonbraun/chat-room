@@ -13,7 +13,7 @@ interface Message {
     roomName: string,
     username?: string,
     text?: string,
-    eventNotification?: string
+    eventNotification?: string,
 };
 
 interface SocketValue {
@@ -24,10 +24,10 @@ interface SocketValue {
     username: string,
     isCorrectPassword?: boolean,
     saveUsername: (username: string) => void,
-    joinOpenRoom: (roomName: string, username: string) => void;
-    joinLockedRoom: (roomName: string, password: string, username: string) => void;
-    sendMessage: (username: string, text: string, roomName: string) => void;
-    leaveRoom: () => void;
+    joinOpenRoom: (roomName: string, username: string) => void,
+    joinLockedRoom: (roomName: string, password: string, username: string) => void,
+    sendMessage: (username: string, text: string, roomName: string) => void,
+    leaveRoom: () => void,
 };
 
 const socket = io('http://localhost:4000', { transports: ["websocket"] });
@@ -39,8 +39,8 @@ export const SocketContext = createContext<SocketValue>({} as SocketValue);
 const SocketProvider: FunctionComponent = ({ children }) => {
     const [username, setUsername] = useState('');
     const [allMessages, setAllMessages] = useState<Message[]>([]);
-    const [openRooms, setOpenRooms] = useState<OpenRoom[]>([])
-    const [lockedRooms, setLockedRooms] = useState<LockedRoom[]>([])
+    const [openRooms, setOpenRooms] = useState<OpenRoom[]>([]);
+    const [lockedRooms, setLockedRooms] = useState<LockedRoom[]>([]);
     const [activeChatRoom, setActiveChatRoom] = useState('');
     const [isCorrectPassword, setIsCorrectPassword] = useState<boolean>(true);
 
@@ -62,8 +62,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
 
         const eventNotification = `${username} joined room`;
         sendEventMessage(roomName, eventNotification)
-    }; 
-
+    };
 
     function sendEventMessage(roomName: string, eventNotification: string) {
         const message: Message = {
@@ -71,18 +70,17 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             eventNotification
         };
         socket.emit('event-notification', message, roomName)
-    }
-        
-    function sendMessage(username: string, text: string, roomName: string, ) {
+    };
+
+    function sendMessage(username: string, text: string, roomName: string,) {
         const message: Message = {
-            roomName, 
-            username, 
-            text 
+            roomName,
+            username,
+            text
         };
         socket.emit('chat-message', message);
         setAllMessages([...allMessages, message]);
     };
-
 
     function leaveRoom() {
         socket.emit('leave-room', activeChatRoom, username);
@@ -92,13 +90,11 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         setAllMessages(updatedAllMessages);
         const eventNotification = `${username} left room`;
         sendEventMessage(activeChatRoom, eventNotification);
-
     };
 
     useEffect(() => {
-        // lägg till ON lyssnare här:        
         socket.on('send-message', (message: Message) => {
-            setAllMessages((prevMessages) => [...prevMessages, message])
+            setAllMessages((prevMessages) => [...prevMessages, message]);
         });
 
         socket.on('all-open-rooms', createdRooms => {
@@ -109,8 +105,8 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             setLockedRooms(createdRooms);
         });
 
-        socket.on('send-event-notification', function(message: Message) {
-            setAllMessages((prevMessages) => [...prevMessages, message])
+        socket.on('send-event-notification', function (message: Message) {
+            setAllMessages((prevMessages) => [...prevMessages, message]);
         });
 
         socket.on('join-locked-room-response', ({ roomName, success }) => {
@@ -123,7 +119,6 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             }
         });
 
-
     }, []);
 
     return (
@@ -133,14 +128,11 @@ const SocketProvider: FunctionComponent = ({ children }) => {
             activeChatRoom,
             username,
             isCorrectPassword,
-            
             saveUsername,
             joinOpenRoom,
             joinLockedRoom,
-
             sendMessage,
             allMessages,
-
             leaveRoom,
         }}>
             { children}
