@@ -52,7 +52,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.emit('join-open-room', roomName, username);
         setActiveChatRoom(roomName)
 
-        const eventNotification = `${username} has joined room`;
+        const eventNotification = `${username} joined room`;
         sendEventMessage(roomName, eventNotification)
     };
 
@@ -60,7 +60,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         socket.emit('join-locked-room', roomName, password, username);
         setActiveChatRoom(roomName)
 
-        const eventNotification = `${username} has joined room`;
+        const eventNotification = `${username} joined room`;
         sendEventMessage(roomName, eventNotification)
     }; 
 
@@ -90,7 +90,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         const copyAllMessages = [...allMessages]
         const updatedAllMessages = copyAllMessages.filter((message) => message.roomName !== activeChatRoom)
         setAllMessages(updatedAllMessages);
-        const eventNotification = `${username} has left room`;
+        const eventNotification = `${username} left room`;
         sendEventMessage(activeChatRoom, eventNotification);
 
     };
@@ -114,6 +114,7 @@ const SocketProvider: FunctionComponent = ({ children }) => {
         });
 
         socket.on('join-locked-room-response', ({ roomName, success }) => {
+            setIsCorrectPassword(false);
             if (success) {
                 setActiveChatRoom(roomName);
                 setIsCorrectPassword(true);

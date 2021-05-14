@@ -20,12 +20,16 @@ function Main(props: Props) {
     return(
         <main style={rootStyle}>
            <Sidebar 
-                openForm={toggleNewChatForm} 
+                openForm={(value) => setShowForm(value)} 
                 signOut={props.signOut}
-                joinChat={() => setLeaveCurrentRoom(false)}
+                joinChat={(value) => setLeaveCurrentRoom(value)}
+                clickedFormButton={showForm}
             />
            {showForm 
-            ?   <NewChatForm closeForm={toggleNewChatForm}/>
+            ?   <NewChatForm 
+                    closeForm={toggleNewChatForm}
+                    joinChat={() => setLeaveCurrentRoom(false)}
+                />
             :   <ChatContainer 
                     leaveChat={leaveCurrentRoom}
                     setLeaveChat={() => setLeaveCurrentRoom(true)}

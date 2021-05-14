@@ -5,8 +5,9 @@ import chatLogo from "../assets/chatLogo.svg"
 
 interface Props {
     signOut: () => void;
-    openForm: () => void
-    joinChat: () => void;
+    openForm: (value: boolean) => void
+    joinChat: (value: boolean) => void;
+    clickedFormButton: boolean;
 };
 
 function Sidebar(props: Props) {
@@ -24,13 +25,7 @@ function Sidebar(props: Props) {
     const [showPasswordInput, setShowPasswordInput] = useState(false);
     const [inputPassword, setInputPassword] = useState('');
     const [clickedRoom, setClickedRoom] = useState('');
-    const [windowSize, setWindowSize] = useState(window.innerWidth);
     const [showErrorMessage, setShowErrorMessage] = useState(false)
-
-    // Ej klar
-    useEffect(() => {
-        setWindowSize(window.innerWidth)
-    }, [])
 
     function openPasswordInput(roomName: string) {
         setClickedRoom(roomName)
@@ -39,21 +34,21 @@ function Sidebar(props: Props) {
 
     function handleJoinLockedRoom() {
         joinLockedRoom(clickedRoom, inputPassword, username);   
-        setInputPassword('')
+        setInputPassword('');
     };
 
     useEffect(() => {
         if (isCorrectPassword) {
-            setShowPasswordInput(false)
-            setShowErrorMessage(false)
+            setShowPasswordInput(false);
+            setShowErrorMessage(false);
         } else {
-            setShowErrorMessage(true)
+            setShowErrorMessage(true);
         }
     }, [isCorrectPassword])
     
 
     return (
-        <aside style={windowSize > 655 ? rootStyle : {...rootStyle, ...rootStyleMobile}}>
+        <aside style={rootStyle}>
             <div style={welcomeContainer}>
                 <img 
                     src={chatLogo} 
@@ -70,8 +65,11 @@ function Sidebar(props: Props) {
             </div>
             <div style={roomButtonsContainer}>
                 <button
-                    onClick={props.openForm}
-                    style={{ ...buttonStyle, ...newChatButtonStyle }}
+                    onClick={() => {props.openForm(true); setShowPasswordInput(false)}}
+                    style={props.clickedFormButton 
+                            ?   { ...buttonStyle, ...newChatButtonStyle, ...activeButtonStyle }
+                            :   { ...buttonStyle, ...newChatButtonStyle }
+                        }
                 >
                     New Chat
                 </button>
@@ -81,11 +79,17 @@ function Sidebar(props: Props) {
                 {openRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={room.roomName === activeChatRoom 
+                        style={room.roomName === activeChatRoom && !props.clickedFormButton
                             ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => {joinOpenRoom(room.roomName, username); props.joinChat()}}
+                        onClick={() => {
+                            joinOpenRoom(room.roomName, username); 
+                            props.joinChat(false);
+                            setShowPasswordInput(false);
+                            props.openForm(false);
+                        }}
+                        disabled={room.roomName === activeChatRoom}
                     >
                         {room.roomName}
                     </button>
@@ -98,11 +102,16 @@ function Sidebar(props: Props) {
                 {lockedRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={room.roomName === activeChatRoom 
+                        style={room.roomName === activeChatRoom && !props.clickedFormButton
                             ? { ...buttonStyle, ...activeButtonStyle } 
                             : buttonStyle
                         }
-                        onClick={() => {openPasswordInput(room.roomName); props.joinChat()}}
+                        onClick={() => {
+                            openPasswordInput(room.roomName); 
+                            props.joinChat(false);
+                            props.openForm(false);
+                        }}
+                        disabled={room.roomName === activeChatRoom}
                         id={room.roomName}
                     >
                         {room.roomName}
@@ -154,10 +163,6 @@ const rootStyle: CSSProperties = {
     minWidth: '15rem',
     height: '100vh',
     boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
-};
-
-const rootStyleMobile: CSSProperties = {
-    backgroundColor: 'pink',
 };
 
 const welcomeContainer: CSSProperties = {
