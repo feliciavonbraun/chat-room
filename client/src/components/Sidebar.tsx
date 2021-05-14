@@ -1,7 +1,11 @@
 import { CSSProperties, useEffect, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
-import chatLogo from "../assets/chatLogo.svg"
+import chatLogo from "../assets/chatLogo.svg";
+import { useMediaQuery } from "./useMediaQuery";
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import './MobileSidebar.css';
 
 interface Props {
     signOut: () => void;
@@ -23,37 +27,64 @@ function Sidebar(props: Props) {
     const [showPasswordInput, setShowPasswordInput] = useState(false);
     const [inputPassword, setInputPassword] = useState('');
     const [clickedRoom, setClickedRoom] = useState('');
-    const [windowSize, setWindowSize] = useState(window.innerWidth);
+    const [isOpenSidebar, setIsOpenSidebar] = useState(false);
 
-    // Ej klar
-    useEffect(() => {
-        setWindowSize(window.innerWidth)
-    }, [])
-
-    function openPasswordInput(roomName: string) {
-        setClickedRoom(roomName)
-        setShowPasswordInput(true)
-    };
-
-    function handleJoinLockedRoom() {
-        joinLockedRoom(clickedRoom, inputPassword, username);   
-        setInputPassword('')
-    };
+    let mobileView = useMediaQuery('(max-width: 780px)');
 
     useEffect(() => {
         if (isCorrectPassword) {
-            setShowPasswordInput(false)
+            setShowPasswordInput(false);
         }
-    }, [isCorrectPassword])
-    
+
+    }, [isCorrectPassword]);
+
+    function openPasswordInput(roomName: string) {
+        setClickedRoom(roomName);
+        setShowPasswordInput(true);
+    };
+
+    function handleJoinLockedRoom() {
+        joinLockedRoom(clickedRoom, inputPassword, username);
+        setInputPassword('');
+        // props.openForm(false);
+    };
+
+    function handleSidebarStyle() {
+        let style = '';
+
+        if (mobileView) {
+            style = 'mobileRootStyle'
+            if(!isOpenSidebar) {
+                style = 'mobileRootStyle closeStripeStyle'
+                return style;
+            }
+            return style;
+        } else {
+            style = 'rootStyle'
+            return style
+        }
+    };
 
     return (
-        <aside style={windowSize > 655 ? rootStyle : {...rootStyle, ...rootStyleMobile}}>
+        <aside
+            className={handleSidebarStyle()}
+        >
+            {mobileView &&
+                <div
+                    style={stripeStyle}
+                    onClick={() => setIsOpenSidebar(!isOpenSidebar)}
+                >
+                    {!isOpenSidebar 
+                        ? <ArrowForwardIosIcon/>
+                        : <ArrowBackIosIcon/>
+                    }
+                </div>
+            }
             <div style={welcomeContainer}>
-                <img 
-                    src={chatLogo} 
+                <img
+                    src={chatLogo}
                     style={logoStyle}
-                    alt="ChatALot" 
+                    alt="ChatALot"
                 />
                 <h3 style={usernameStyle}>{username}</h3>
                 <button
@@ -76,8 +107,8 @@ function Sidebar(props: Props) {
                 {openRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={room.roomName === activeChatRoom 
-                            ? { ...buttonStyle, ...activeButtonStyle } 
+                        style={room.roomName === activeChatRoom
+                            ? { ...buttonStyle, ...activeButtonStyle }
                             : buttonStyle
                         }
                         onClick={() => joinOpenRoom(room.roomName, username)}
@@ -86,15 +117,15 @@ function Sidebar(props: Props) {
                     </button>
                 ))}
             </div>
-            <h3 style={{ color: '#5C5C5C' }}>
+            <h3 style={{ color: '#5C5C5C', textAlign: 'center' }}>
                 Private Chat
             </h3>
             <div style={roomButtonsContainer}>
                 {lockedRooms.map((room, index) => (
                     <button
                         key={index}
-                        style={room.roomName === activeChatRoom 
-                            ? { ...buttonStyle, ...activeButtonStyle } 
+                        style={room.roomName === activeChatRoom
+                            ? { ...buttonStyle, ...activeButtonStyle }
                             : buttonStyle
                         }
                         onClick={() => openPasswordInput(room.roomName)}
@@ -133,18 +164,42 @@ function Sidebar(props: Props) {
     )
 };
 
-const rootStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '40%',
-    minWidth: '15rem',
-    height: '100vh',
-    boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
-};
+// const rootStyle: CSSProperties = {
+//     display: 'flex',
+//     flexDirection: 'column',
+//     alignItems: 'center',
+//     width: '40%',
+//     minWidth: '15rem',
+//     height: '100vh',
+//     boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
+// };
 
-const rootStyleMobile: CSSProperties = {
-    backgroundColor: 'pink',
+// const mobileRootStyle: CSSProperties = {
+//     position: 'absolute',
+//     zIndex: 10,
+//     display: 'flex',
+//     flexDirection: 'column',
+//     alignItems: 'center',
+//     width: '100%',
+//     height: '100vh',
+//     backgroundColor: 'white',
+// };
+
+// const closeStripeStyle: CSSProperties = {
+//     left: 'calc(-100% + 1rem)'
+// };
+
+const stripeStyle: CSSProperties = {
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 0,
+    height: '100vh',
+    width: '2rem',
+    cursor: 'pointer',
+    backgroundImage: 'linear-gradient(#00A8F4, #00F39A)',
+    color: 'white',
 };
 
 const welcomeContainer: CSSProperties = {
