@@ -39,7 +39,7 @@ function Sidebar(props: Props) {
             setShowErrorMessage(false);
         } else {
             setShowErrorMessage(true);
-    }, [isCorrectPassword]); 
+    }}, [isCorrectPassword]); 
           
     function openPasswordInput(roomName: string) {
         setClickedRoom(roomName);
