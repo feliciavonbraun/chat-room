@@ -7,7 +7,7 @@ import animationData from '../assets/waiting.json';
 interface Props {
     leaveChat: boolean;
     setLeaveChat: () => void;
-}
+};
 
 function ChatContainer(props: Props) {
     const {

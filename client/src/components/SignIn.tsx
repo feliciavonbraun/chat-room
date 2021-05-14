@@ -1,53 +1,53 @@
-import { CSSProperties, useContext, useState } from "react"
-import { SocketContext } from "../contexts/socketProvider"
-import chatLogo from "../assets/chatLogo.svg"
+import { CSSProperties, useContext, useState } from "react";
+import { SocketContext } from "../contexts/socketProvider";
+import chatLogo from "../assets/chatLogo.svg";
 
 interface Props {
     signIn: () => void
 };
 
 function SignIn(props: Props) {
-    const [username, setUsername] = useState('')
+    const [username, setUsername] = useState('');
     const { saveUsername, joinOpenRoom } = useContext(SocketContext);
 
-    function handleSignIn(e:React.FormEvent) {
-        e.preventDefault()
-        setUsername(username)
-        saveUsername(username)
-        joinOpenRoom('Living room', username)
-        props.signIn()
-    }
+    function handleSignIn(e: React.FormEvent) {
+        e.preventDefault();
+        setUsername(username);
+        saveUsername(username);
+        joinOpenRoom('Living room', username);
+        props.signIn();
+    };
 
     return (
         <main style={rootStyle}>
             <div style={signInContainer}>
-                <img 
-                    src={chatLogo} 
+                <img
+                    src={chatLogo}
                     style={logoStyle}
                     alt="ChatALot"
                 />
                 <form onSubmit={(e) => handleSignIn(e)} style={formStyle}>
-                    <input 
-                        type='text' 
+                    <input
+                        type='text'
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder='Username'
                         maxLength={15}
                         style={inputStyle}
                     />
-                    <button 
-                        type='submit' 
-                        style={username.length < 3 
-                                ? {...buttonStyle, ...disabled} 
-                                : {...buttonStyle, ...active}} 
+                    <button
+                        type='submit'
+                        style={username.length < 3
+                            ? { ...buttonStyle, ...disabled }
+                            : { ...buttonStyle, ...active }}
                         disabled={username.length < 3}
-                        >
+                    >
                         Let's Go
                     </button>
                 </form>
             </div>
         </main>
     )
-}
+};
 
 const rootStyle: CSSProperties = {
     display: 'flex',

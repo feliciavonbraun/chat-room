@@ -15,5 +15,5 @@ export function useMediaQuery(query: string) {
     return () => media.removeListener(listener);
   }, [matches, query]);
 
-    return matches;
+  return matches;
 }
