@@ -3,6 +3,7 @@ import { SocketContext } from "../contexts/socketProvider";
 
 interface Props {
     closeForm: () => void;
+    joinChat: () => void;
 };
 
 function NewChatForm(props: Props) {
@@ -11,28 +12,30 @@ function NewChatForm(props: Props) {
     const [password, setPassword] = useState('');
     const [takenName, setTakenName] = useState(false)
 
-    const { joinOpenRoom, joinLockedRoom, username, openRooms, lockedRooms } = useContext(SocketContext);
+    const { 
+        joinOpenRoom, 
+        joinLockedRoom, 
+        username, 
+        openRooms, 
+        lockedRooms 
+    } = useContext(SocketContext);
 
-    console.log(takenName)
     function createNewChat(e: React.FormEvent) {
         e.preventDefault();
         const openRoomExist = openRooms.find((room) => room.roomName === roomName) 
         const lockedRoomExist = lockedRooms.find((room) => room.roomName === roomName) 
 
-        console.log(openRoomExist?.roomName)
-        console.log(lockedRoomExist?.roomName)
-
         if (openRoomExist?.roomName || lockedRoomExist?.roomName === roomName) {
-            setTakenName(true)
+            setTakenName(true);
         } else {
             if (password.length > 0) {
                 joinLockedRoom(roomName, password, username);
+                props.closeForm();
             } else {
                 joinOpenRoom(roomName, username);
-                props.closeForm()
+                props.closeForm();
             };
-        }
-
+        };
     };
 
     return (
@@ -43,7 +46,7 @@ function NewChatForm(props: Props) {
                 </div>
                 <form
                     style={formStyle}
-                    onSubmit={(e) => createNewChat(e)}
+                    onSubmit={(e) => {createNewChat(e); props.joinChat()}}
                     >
                         {takenName 
                             ?   <p 
