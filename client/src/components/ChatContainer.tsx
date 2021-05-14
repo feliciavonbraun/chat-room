@@ -53,15 +53,9 @@ function ChatContainer(props: Props) {
                     ?
                     <div style={middlePage}>
                         <p>
-                            Hey {username}!
-                        </p>
-                        <p>
-                            You are currently not in a room,
-                        </p>
-                        <p>
-                             choose one to keep chatting!
-                        </p>
-                        <p>
+                            Hey {username}!<br></br>
+                            You are currently not in a room,<br></br>
+                             choose one to keep chatting!<br></br>
                             /Fred
                         </p>
                         <div style={lottieBox}>
@@ -153,7 +147,8 @@ const middlePage: CSSProperties = {
     flexDirection: 'column',
     marginTop: '10rem',
     alignContent: 'center',
-    textAlign: 'center'
+    textAlign: 'center',
+    lineHeight: '1.3rem'
 
 }
 
