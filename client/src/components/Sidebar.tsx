@@ -46,7 +46,6 @@ function Sidebar(props: Props) {
     function handleJoinLockedRoom() {
         joinLockedRoom(clickedRoom, inputPassword, username);
         setInputPassword('');
-        // props.openForm(false);
     };
 
     function handleSidebarStyle() {
@@ -164,30 +163,7 @@ function Sidebar(props: Props) {
     )
 };
 
-// const rootStyle: CSSProperties = {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     alignItems: 'center',
-//     width: '40%',
-//     minWidth: '15rem',
-//     height: '100vh',
-//     boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
-// };
-
-// const mobileRootStyle: CSSProperties = {
-//     position: 'absolute',
-//     zIndex: 10,
-//     display: 'flex',
-//     flexDirection: 'column',
-//     alignItems: 'center',
-//     width: '100%',
-//     height: '100vh',
-//     backgroundColor: 'white',
-// };
-
-// const closeStripeStyle: CSSProperties = {
-//     left: 'calc(-100% + 1rem)'
-// };
+// Styling for mobile view: MobileSidebar.css
 
 const stripeStyle: CSSProperties = {
     position: 'absolute',
