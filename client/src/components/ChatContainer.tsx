@@ -148,7 +148,8 @@ const middlePage: CSSProperties = {
     marginTop: '10rem',
     alignContent: 'center',
     textAlign: 'center',
-    lineHeight: '1.3rem'
+    lineHeight: '1.3rem',
+    color: '#5C5C5C'
 
 }
 
