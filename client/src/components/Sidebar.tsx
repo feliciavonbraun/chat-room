@@ -40,8 +40,8 @@ function Sidebar(props: Props) {
         } else {
             setShowErrorMessage(true);
         }
-    }, [isCorrectPassword]);
-
+    }, [isCorrectPassword]); 
+        
     function openPasswordInput(roomName: string) {
         setClickedRoom(roomName);
         setShowPasswordInput(true);
@@ -100,11 +100,15 @@ function Sidebar(props: Props) {
             </div>
             <div style={roomButtonsContainer}>
                 <button
-                    onClick={() => { props.openForm(true); setShowPasswordInput(false) }}
-                    style={props.clickedFormButton
-                        ? { ...buttonStyle, ...newChatButtonStyle, ...activeButtonStyle }
-                        : { ...buttonStyle, ...newChatButtonStyle }
-                    }
+                    onClick={() => {
+                        props.openForm(true); 
+                        setShowPasswordInput(false);
+                        setIsOpenSidebar(false);
+                    }}
+                    style={props.clickedFormButton 
+                            ?   { ...buttonStyle, ...newChatButtonStyle, ...activeButtonStyle }
+                            :   { ...buttonStyle, ...newChatButtonStyle }
+                        }
                 >
                     New Chat
                 </button>
@@ -123,6 +127,7 @@ function Sidebar(props: Props) {
                             props.joinChat(false);
                             setShowPasswordInput(false);
                             props.openForm(false);
+                            setIsOpenSidebar(false)
                         }}
                         disabled={room.roomName === activeChatRoom}
                     >
@@ -172,7 +177,7 @@ function Sidebar(props: Props) {
                         />
                         <button
                             style={{ ...buttonStyle, ...passwordButtonStyle }}
-                            onClick={handleJoinLockedRoom}
+                            onClick={() => {handleJoinLockedRoom(); setIsOpenSidebar(false)}}
                         >
                             Join
                         </button>
