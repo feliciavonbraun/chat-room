@@ -7,23 +7,23 @@ interface Props {
 };
 
 function NewChatForm(props: Props) {
-    const [privateChat, setPrivateChat] = useState(false)
+    const [privateChat, setPrivateChat] = useState(false);
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
-    const [takenName, setTakenName] = useState(false)
+    const [takenName, setTakenName] = useState(false);
 
-    const { 
-        joinOpenRoom, 
-        joinLockedRoom, 
-        username, 
-        openRooms, 
-        lockedRooms 
+    const {
+        joinOpenRoom,
+        joinLockedRoom,
+        username,
+        openRooms,
+        lockedRooms
     } = useContext(SocketContext);
 
     function createNewChat(e: React.FormEvent) {
         e.preventDefault();
-        const openRoomExist = openRooms.find((room) => room.roomName === roomName) 
-        const lockedRoomExist = lockedRooms.find((room) => room.roomName === roomName) 
+        const openRoomExist = openRooms.find((room) => room.roomName === roomName);
+        const lockedRoomExist = lockedRooms.find((room) => room.roomName === roomName);
 
         if (openRoomExist?.roomName || lockedRoomExist?.roomName === roomName) {
             setTakenName(true);
@@ -39,23 +39,23 @@ function NewChatForm(props: Props) {
     };
 
     return (
-        <div style={{ width: '100%', padding: '0 1rem', }}>
+        <div style={{ width: '100%', padding: '0 1rem' }}>
             <div style={rootStyle}>
                 <div style={titleContainer}>
                     <h2>Create New Chat</h2>
                 </div>
                 <form
                     style={formStyle}
-                    onSubmit={(e) => {createNewChat(e); props.joinChat()}}
-                    >
-                        {takenName 
-                            ?   <p 
-                                style={{textAlign: 'center', color:'#E86666'}}
-                                >
-                                  Chat name already exist
-                                </p>
-                            :   <p>Chat name</p>
-                        }
+                    onSubmit={(e) => { createNewChat(e); props.joinChat() }}
+                >
+                    {takenName
+                        ?
+                        <p style={{ textAlign: 'center', color: '#E86666' }}>
+                            Chat name already exist
+                        </p>
+                        :
+                        <p>Chat name</p>
+                    }
                     <input
                         type='text'
                         style={inputStyle}
@@ -63,7 +63,6 @@ function NewChatForm(props: Props) {
                         onClick={() => setTakenName(false)}
                         required
                     />
-
                     <p style={{ marginBottom: '.3rem' }}>
                         Private chat
                     </p>

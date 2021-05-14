@@ -7,7 +7,7 @@ import animationData from '../assets/waiting.json';
 interface Props {
     leaveChat: boolean;
     setLeaveChat: () => void;
-}
+};
 
 function ChatContainer(props: Props) {
     const {
@@ -33,7 +33,7 @@ function ChatContainer(props: Props) {
     //TODO: Scrollar inte hela vägen ner. Missar senaste meddelandet.
     function ScrollToNewMessage() {
         const scrollContainer = document.getElementById('scrollContainer');
-        scrollContainer?.scrollTo(0, scrollContainer.scrollHeight)
+        scrollContainer?.scrollTo(0, scrollContainer.scrollHeight);
     };
 
     const defaultOptions = {
@@ -43,9 +43,7 @@ function ChatContainer(props: Props) {
         rendererSettings: {
             preserveAspectRatio: 'xMidYMid slice'
         }
-    }
-
-
+    };
 
     return (
         <div style={ mobileView ? {width: '100%', padding: '0 1rem 0 3rem'} : { width: '100%', padding: '0 1rem', }}>
@@ -151,13 +149,12 @@ const middlePage: CSSProperties = {
     textAlign: 'center',
     lineHeight: '1.3rem',
     color: '#5C5C5C'
-
-}
+};
 
 const lottieBox: CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
-}
+};
 
 const roomNameStyle: CSSProperties = {
     textAlign: 'center',
@@ -182,7 +179,7 @@ const notificationMessageStyle: CSSProperties = {
     textAlign: 'center',
     color: '#5C5C5C',
     fontSize: '.8rem',
-}
+};
 
 const messageStyle: CSSProperties = {
     fontSize: '0.8rem',
