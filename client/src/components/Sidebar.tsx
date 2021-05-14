@@ -1,7 +1,11 @@
 import { CSSProperties, useEffect, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/socketProvider";
-import chatLogo from "../assets/chatLogo.svg"
+import chatLogo from "../assets/chatLogo.svg";
+import { useMediaQuery } from "./useMediaQuery";
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import './MobileSidebar.css';
 
 interface Props {
     signOut: () => void;
@@ -25,35 +29,65 @@ function Sidebar(props: Props) {
     const [showPasswordInput, setShowPasswordInput] = useState(false);
     const [inputPassword, setInputPassword] = useState('');
     const [clickedRoom, setClickedRoom] = useState('');
-    const [showErrorMessage, setShowErrorMessage] = useState(false)
-
-    function openPasswordInput(roomName: string) {
-        setClickedRoom(roomName)
-        setShowPasswordInput(true)
-    };
-
-    function handleJoinLockedRoom() {
-        joinLockedRoom(clickedRoom, inputPassword, username);   
-        setInputPassword('');
-    };
-
-    useEffect(() => {
+    const [isOpenSidebar, setIsOpenSidebar] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    let mobileView = useMediaQuery('(max-width: 780px)');
+  
+   useEffect(() => {
         if (isCorrectPassword) {
             setShowPasswordInput(false);
             setShowErrorMessage(false);
         } else {
             setShowErrorMessage(true);
+    }, [isCorrectPassword]); 
+          
+    function openPasswordInput(roomName: string) {
+        setClickedRoom(roomName);
+        setShowPasswordInput(true);
+    };
+
+    function handleJoinLockedRoom() {
+        joinLockedRoom(clickedRoom, inputPassword, username);
+        setInputPassword('');
+    };
+
+    function handleSidebarStyle() {
+        let style = '';
+
+        if (mobileView) {
+            style = 'mobileRootStyle'
+            if(!isOpenSidebar) {
+                style = 'mobileRootStyle closeStripeStyle'
+                return style;
+            }
+            return style;
+        } else {
+            style = 'rootStyle'
+            return style
         }
-    }, [isCorrectPassword])
-    
+    };
 
     return (
-        <aside style={rootStyle}>
+        <aside
+            className={handleSidebarStyle()}
+        >
+            {mobileView &&
+                <div
+                    style={stripeStyle}
+                    onClick={() => setIsOpenSidebar(!isOpenSidebar)}
+                >
+                    {!isOpenSidebar 
+                        ? <ArrowForwardIosIcon/>
+                        : <ArrowBackIosIcon/>
+                    }
+                </div>
+            }
+
             <div style={welcomeContainer}>
-                <img 
-                    src={chatLogo} 
+                <img
+                    src={chatLogo}
                     style={logoStyle}
-                    alt="ChatALot" 
+                    alt="ChatALot"
                 />
                 <h3 style={usernameStyle}>{username}</h3>
                 <button
@@ -95,7 +129,7 @@ function Sidebar(props: Props) {
                     </button>
                 ))}
             </div>
-            <h3 style={{ color: '#5C5C5C' }}>
+            <h3 style={{ color: '#5C5C5C', textAlign: 'center' }}>
                 Private Chat
             </h3>
             <div style={roomButtonsContainer}>
@@ -155,14 +189,19 @@ function Sidebar(props: Props) {
     )
 };
 
-const rootStyle: CSSProperties = {
+// Styling for mobile view: MobileSidebar.css
+
+const stripeStyle: CSSProperties = {
+    position: 'absolute',
     display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
-    width: '40%',
-    minWidth: '15rem',
+    justifyContent: 'center',
+    right: 0,
     height: '100vh',
-    boxShadow: '-.1rem -.2rem .3rem #00000020 inset',
+    width: '2rem',
+    cursor: 'pointer',
+    backgroundImage: 'linear-gradient(#00A8F4, #00F39A)',
+    color: 'white',
 };
 
 const welcomeContainer: CSSProperties = {

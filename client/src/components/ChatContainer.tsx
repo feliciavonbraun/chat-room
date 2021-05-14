@@ -1,5 +1,6 @@
 import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
+import { useMediaQuery } from "./useMediaQuery";
 import Lottie from 'react-lottie';
 import animationData from '../assets/waiting.json';
 
@@ -20,7 +21,7 @@ function ChatContainer(props: Props) {
     const [text, setText] = useState('');
     const you = username;
     const roomMessages = allMessages.filter((message) => message.roomName === activeChatRoom);
-
+    let mobileView = useMediaQuery('(max-width: 780px)');
 
     function handleMessage(e: React.FormEvent) {
         e.preventDefault();
@@ -47,7 +48,7 @@ function ChatContainer(props: Props) {
 
 
     return (
-        <div style={{ width: '100%', padding: '0 1rem', }}>
+        <div style={ mobileView ? {width: '100%', padding: '0 1rem 0 3rem'} : { width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
                 {props.leaveChat
                     ?
