@@ -274,7 +274,7 @@ const buttonStyle: CSSProperties = {
 
 const noBorderButtonStyle: CSSProperties = {
     boxShadow: 'none',
-    padding: '0',
+    padding: '0 0 2rem',
     color: '#00ADEF',
 };
 

@@ -12,14 +12,15 @@
 .mobileRootStyle {
     position: absolute;
     z-index: 10;
+    left: 0;
     display: flex;
     flex-direction: column; 
     align-items: center;
     width: 100%;
     height: 100vh;
     background-color: white;
+    overflow-y: scroll;
     transition: .5s ease-in-out;
-    left: 0;
 }
 
 .closeStripeStyle {

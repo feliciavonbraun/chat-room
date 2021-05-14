@@ -47,7 +47,7 @@ function ChatContainer(props: Props) {
     };
 
     return (
-        <div style={ mobileView ? {width: '100%', padding: '0 1rem 0 3rem'} : { width: '100%', padding: '0 1rem', }}>
+        <div style={ mobileView ? {width: '100%', padding: '0 1rem 0 2.5rem'} : { width: '100%', padding: '0 1rem', }}>
             <div style={rootStyle}>
                 {props.leaveChat
                     ?
@@ -68,10 +68,12 @@ function ChatContainer(props: Props) {
                     </div>
                     :
                     <div>
-                        <div style={topChatStyle}>
+                        <div style={mobileView ? mobileTopChatStyle : topChatStyle}>
                             {activeChatRoom !== 'Living room' && (
                                 <button
-                                    style={{ ...buttonStyle, ...leaveButtonStyle }}
+                                    style={mobileView 
+                                        ?   { ...buttonStyle, ...mobileLeaveButtonStyle } 
+                                        :   { ...buttonStyle, ...leaveButtonStyle }}
                                     onClick={() =>  {leaveRoom(); props.setLeaveChat()}}
                                 >
                                     Leave room
@@ -138,6 +140,14 @@ const rootStyle: CSSProperties = {
 const topChatStyle: CSSProperties = {
     position: 'relative',
     display: 'flex',
+    alignItems: 'center',
+    margin: '2.5rem 0 1.5rem',
+};
+
+const mobileTopChatStyle: CSSProperties = {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     margin: '2.5rem 0 1.5rem',
 };
@@ -248,6 +258,11 @@ const buttonStyle: CSSProperties = {
 
 const leaveButtonStyle: CSSProperties = {
     position: 'absolute',
+    backgroundColor: 'white',
+    color: '#5C5C5C',
+};
+
+const mobileLeaveButtonStyle: CSSProperties = {
     backgroundColor: 'white',
     color: '#5C5C5C',
 };
