@@ -1,5 +1,6 @@
 import { CSSProperties, useContext, useState } from "react";
 import { SocketContext } from "../contexts/socketProvider";
+import { useMediaQuery } from "./useMediaQuery";
 
 interface Props {
     closeForm: () => void;
@@ -11,6 +12,7 @@ function NewChatForm(props: Props) {
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
     const [takenName, setTakenName] = useState(false);
+    let mobileView = useMediaQuery('(max-width: 780px)');
 
     const {
         joinOpenRoom,
@@ -45,7 +47,7 @@ function NewChatForm(props: Props) {
                     <h2>Create New Chat</h2>
                 </div>
                 <form
-                    style={formStyle}
+                    style={mobileView ? mobileFormStyle : formStyle}
                     onSubmit={(e) => { createNewChat(e); props.joinChat() }}
                 >
                     {takenName
@@ -143,6 +145,14 @@ const formStyle: CSSProperties = {
     justifyContent: 'center',
     width: '60%',
     margin: '5rem auto 0',
+};
+
+const mobileFormStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '60%',
+    margin: '0 auto',
 };
 
 const inputStyle: CSSProperties = {
